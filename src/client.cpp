@@ -435,6 +435,7 @@ bool HttpClient::GenerateHeader()
     header_ << "User-Agent: " << ANYRPC_APP_NAME << " v" << ANYRPC_VERSION_STRING << "\r\n";
     header_ << "Host: " << host_ << ":" << port_ << "\r\n";
     header_ << "Content-Type: " << contentType_ << "\r\n";
+    header_ << "Accept: " << contentType_ << "\r\n";
     header_ << "Content-length: " << request_.Length() << "\r\n";
     header_ << "\r\n";
 
