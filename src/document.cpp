@@ -249,7 +249,6 @@ void Document::ConvertBase64(Value *value)
 void Document::EndDocument()
 {
     log_debug("EndDocument");
-    //log_assert( stack_.size() == 1, "Expected stack size of 1, but is " << stack_.size() );
     stack_.clear();
 }
 

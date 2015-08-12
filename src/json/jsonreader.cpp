@@ -125,7 +125,7 @@ void JsonReader::ParseString()
 {
     log_trace();
     // This should only be called when a quote has already been determined to be the next character
-    log_assert(is_.Peek() == '\"', "Expected \" but found " << is_.Peek());
+    anyrpc_assert(is_.Peek() == '\"', AnyRpcErrorParseError, "Expected \" but found " << is_.Peek());
     is_.Get();
 
     if (inSitu_)
@@ -152,7 +152,7 @@ void JsonReader::ParseKey()
 {
     log_trace();
     // This should only be called when a quote has already been determined to be the next character
-    log_assert(is_.Peek() == '\"', "Expected \" but found " << is_.Peek());
+    anyrpc_assert(is_.Peek() == '\"', AnyRpcErrorParseError, "Expected \" but found " << is_.Peek());
     is_.Get();
 
     if (inSitu_)
@@ -290,7 +290,7 @@ void JsonReader::EncodeUtf8(Stream& os, unsigned codepoint)
 void JsonReader::ParseMap()
 {
     log_trace();
-    log_assert(is_.Peek() == '{', "Expected { but found " << is_.Peek());
+    anyrpc_assert(is_.Peek() == '{', AnyRpcErrorParseError, "Expected { but found " << is_.Peek());
     is_.Get();  // Skip '{'
 
     handler_->StartMap();
@@ -340,7 +340,7 @@ void JsonReader::ParseMap()
 void JsonReader::ParseArray()
 {
     log_trace();
-    log_assert(is_.Peek() == '[', "Expected [ but found " << is_.Peek());
+    anyrpc_assert(is_.Peek() == '[', AnyRpcErrorParseError, "Expected [ but found " << is_.Peek());
     is_.Get();  // Skip '['
 
     handler_->StartArray();

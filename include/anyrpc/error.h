@@ -136,12 +136,12 @@ private:
 
 #if (ANYRPC_ASSERT==2) && !defined(NDEBUG)
 // assert will only be active in debug mode
-# define anyrpc_assert(condition, code, message)                     \
+# define anyrpc_assert(condition, code, message)                    \
     log_assert(condition, "Code: " << code << ", Message: " << message)
 
 #elif (ANYRPC_ASSERT >= 1)
 // throw if explicitly requested or if not debug and assert requested
-# define anyrpc_assert(condition, code, message)                     \
+# define anyrpc_assert(condition, code, message)                    \
     do {                                                            \
         if (!(condition))                                           \
         {                                                           \
@@ -166,7 +166,7 @@ private:
 
 #else
 // throw exceptions
-# define anyrpc_throw(code, message)                                  \
+# define anyrpc_throw(code, message)                                  	\
     do {                                                                \
         log_error("Throw exception, Code: " << code << ", Message: " << message);\
         std::stringstream anyrpcAssertBuffer;                           \

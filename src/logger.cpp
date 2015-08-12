@@ -20,12 +20,15 @@
 
 #include "anyrpc/api.h"
 #include "anyrpc/logger.h"
+#include "anyrpc/internal/time.h"
 
 #if BUILD_WITH_LOG4CPLUS
 #include <log4cplus/configurator.h>
 #include <log4cplus/helpers/stringhelper.h>
 #include <iomanip>
 #endif
+
+using namespace anyrpc;
 
 void InitializeLogger()
 {
@@ -50,7 +53,7 @@ TimeLogger::TimeLogger(const log4cplus::Logger& l,
         enabled = true;
         if (timing)
         {
-        	startTime = log4cplus::helpers::Time::gettimeofday();
+        	gettimeofday(&startTime, 0);
         }
     	log4cplus::tostringstream _log4cplus_buf;
     	_log4cplus_buf << LOG4CPLUS_TEXT("ENTER ") << function;
@@ -76,8 +79,9 @@ TimeLogger::~TimeLogger()
     	if (timing)
     	{
         	// determine how much time elapsed
-        	log4cplus::helpers::Time diff = log4cplus::helpers::Time::gettimeofday() - startTime;
-        	double diffTime = diff.sec() + 1e-6 * diff.usec();
+    	    struct timeval endTime;
+    	    gettimeofday( &endTime, 0 );
+    	    double diffTime = anyrpc::MicroTimeDiff(endTime, startTime) * 1e-6;
 
 			_log4cplus_buf.setf( std::ios::fixed, std:: ios::floatfield );
 			_log4cplus_buf.precision(6);

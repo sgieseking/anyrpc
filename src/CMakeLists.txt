@@ -50,18 +50,6 @@ else ()
 	set( LOG4CPLUS_LIBRARIES "" )
 endif ()
 
-#if (MSVC)
-#	add_definitions( -D _CRT_SECURE_NO_WARNINGS )
-#elif (MINGW)
-#	SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -U__STRICT_ANSI__" )
-#else ()
-#	SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -pthread" )
-#	if (BUILD_WITH_ADDRESS_SANITIZE)
-#    	SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer" )
-#    	SET( ASAN_LIBRARY asan )
-#    endif ()
-#endif ()
-
 # Create the libraries with these header and source files
 add_library( anyrpc ${ANYRPC_LIB_TYPE} ${ANYRPC_SOURCES} ${ANYRPC_HEADERS} )
 target_link_libraries( anyrpc ${ASAN_LIBRARY} ${LOG4CPLUS_LIBRARIES})

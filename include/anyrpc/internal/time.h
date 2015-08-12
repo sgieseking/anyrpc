@@ -39,6 +39,9 @@ struct tm* localtime_r(const time_t *timep, struct tm *result);
 //! Compute the difference between the two times in milliseconds
 ANYRPC_API int MilliTimeDiff(struct timeval &time1, struct timeval &time2);
 
+//! Compute the difference between the two times in microseconds
+ANYRPC_API int64_t MicroTimeDiff(struct timeval &time1, struct timeval &time2);
+
 //! Sleep for a time specified in milliseconds
 ANYRPC_API void MilliSleep(unsigned ms);
 

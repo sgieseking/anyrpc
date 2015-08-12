@@ -112,7 +112,7 @@ private:
     const char* function;
     int line;
     bool enabled;
-    log4cplus::helpers::Time startTime;
+    struct timeval startTime;
 };
 
 # define TIME_LEVEL_MACRO(loglevel,msg,timing)                        \
@@ -192,8 +192,8 @@ private:
         do {                                                                        \
             if (LOG4CPLUS_UNLIKELY(! (cond)))                                       \
             {                                                                       \
-                log_fatal( LOG4CPLUS_CALLER_FILE() <<                               \
-                           ":" << LOG4CPLUS_CALLER_LINE() <<                        \
+                log_fatal( __FILE__ <<                                              \
+                           ":" << __LINE__ <<                                       \
                            ":" << LOG4CPLUS_MACRO_FUNCTION() <<                     \
                            ": Assertion '" << LOG4CPLUS_ASSERT_STRINGIFY (cond) <<  \
                            "' failed - " << expr);                                  \
@@ -211,8 +211,8 @@ private:
 # define log_assert_message(cond,expr)                                              \
         LOG4CPLUS_SUPPRESS_DOWHILE_WARNING()                                        \
         do {                                                                        \
-            log_error( LOG4CPLUS_CALLER_FILE() <<                                   \
-                       ":" << LOG4CPLUS_CALLER_LINE() <<                            \
+            log_error( __FILE__ <<                                                  \
+                       ":" << __LINE__ <<                                           \
                        ":" << LOG4CPLUS_MACRO_FUNCTION() <<                         \
                        ": Assertion '" << LOG4CPLUS_ASSERT_STRINGIFY (cond) <<      \
                        "' failed - " << expr);                                      \

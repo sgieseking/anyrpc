@@ -36,7 +36,7 @@ This conversion can be performed by both the server and the client.
 AnyRPC provides cross-platform support with primary targets for Linux, Visual Studio, and MinGW.  Some platform/compiler combinations which have been tested are shown as follows:
 
 * Ubuntu 14.04/gcc v4.8.4
-* Windows 8 with Visual Studio 2015RC, 2013, 2012, 2010
+* Windows 8 with Visual Studio 2015, 2013, 2012, 2010
 * Windows 8 with MinGW/gcc v4.8.1
 
 ## License
