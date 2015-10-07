@@ -205,9 +205,11 @@ void MessagePackReader::ParseNegativeFixInt()
 void MessagePackReader::ParseUint8()
 {
     log_trace();
+    unsigned char Value;
     if (is_.Eof())
         anyrpc_throw(AnyRpcErrorTermination, "Parsing was terminated");
-    handler_->Uint( is_.Get() );
+    Value = is_.Get();
+    handler_->Uint( Value );
     ResetToken();
 }
 
