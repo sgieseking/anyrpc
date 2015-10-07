@@ -412,7 +412,8 @@ bool Client::ReadResponse(Value& result)
     bool eof;
     bool receiveResult = socket_.Receive(response_+contentAvail_, contentLength_-contentAvail_, bytesRead, eof, GetTimeLeft());
     contentAvail_ += bytesRead;
-    response_[contentAvail_] = 0;
+    if(response_)
+    	response_[contentAvail_] = 0;
     if (!receiveResult)
         handler_->GenerateFaultResult(AnyRpcErrorTransportError,"Failed reading response",result);
     return receiveResult;
@@ -421,7 +422,8 @@ bool Client::ReadResponse(Value& result)
 ProcessResponseEnum Client::ProcessResponse(Value& result, bool notification)
 {
     int requestId = requestId_.front();
-    requestId_.pop_front();
+    if(!requestId_.empty())
+    	requestId_.pop_front();
     responseProcessed_ = true;
     return handler_->ProcessResponse(response_,contentLength_,result,requestId,notification);
 }
