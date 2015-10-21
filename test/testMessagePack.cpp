@@ -47,6 +47,11 @@ TEST(MessagePack,Number)
     Value value;
     Value outValue;
 
+    value.SetInt(192);
+    WriteReadValue(value, outValue);
+    EXPECT_TRUE(outValue.IsInt());
+    EXPECT_EQ(outValue.GetInt(), value.GetInt());
+
     value.SetInt(567);
     WriteReadValue(value, outValue);
     EXPECT_TRUE(outValue.IsInt());

@@ -207,7 +207,7 @@ void MessagePackReader::ParseUint8()
     log_trace();
     if (is_.Eof())
         anyrpc_throw(AnyRpcErrorTermination, "Parsing was terminated");
-    handler_->Uint( is_.Get() );
+    handler_->Uint( static_cast<unsigned char>(is_.Get()) );
     ResetToken();
 }
 
