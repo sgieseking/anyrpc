@@ -182,6 +182,7 @@ protected:
     int bufferLength_;                      //!< Amount of data in the buffer_
     int contentLength_;                     //!< Number of bytes for the request body
     bool keepAlive_;                        //!< Indication that the connection should be keep alive after responding
+    std::string method_;           			//!< Request method from the first line
 
     char* request_;                         //!< Pointer to the start of the request body
     int contentAvail_;                      //!< Number of bytes of the request body in the buffer
@@ -229,7 +230,8 @@ protected:
     virtual bool ExecuteRequest();
 
 private:
-    void GenerateHeader(std::size_t bodySize, std::string& contentType);
+    void GeneratePOSTResponseHeader(std::size_t bodySize, std::string& contentType);
+    void GenerateOPTIONSResponseHeader();
 
     internal::HttpRequest httpRequestState_;    //!< Processing of the HTTP header
     RpcHandlerList& handlers_;                  //!< List of RPC handlers to check

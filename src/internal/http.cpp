@@ -171,9 +171,9 @@ HttpHeader::ResultEnum HttpRequest::ProcessFirstLine(std::string &first, std::st
 {
     log_trace();
     // Set the method
-    if (first != "POST")
+    if (first != "POST" && first != "OPTIONS")
     {
-        log_warn("POST method not found: " << first);
+        log_warn("POST or OPTIONS method not found: " << first);
         return HEADER_FAULT;
     }
     method_ = first;
@@ -255,7 +255,7 @@ HttpHeader::ResultEnum HttpRequest::Verify()
             return HEADER_FAULT;
         }
     }
-    if (contentLength_ <= 0)
+    if (contentLength_ <= 0 && method_ == "POST")
     {
         log_warn("Invalid content length: " << contentLength_);
         return HEADER_FAULT;
