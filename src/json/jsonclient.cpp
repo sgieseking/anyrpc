@@ -56,7 +56,7 @@ JsonTcpClient::JsonTcpClient(const char* host, int port) :
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool JsonClientHandler::GenerateRequest(const char* method, Value& params, Stream& os, int& requestId, bool notification)
+bool JsonClientHandler::GenerateRequest(const char* method, Value& params, Stream& os, unsigned& requestId, bool notification)
 {
     log_trace();
     Value request;
@@ -69,7 +69,7 @@ bool JsonClientHandler::GenerateRequest(const char* method, Value& params, Strea
         request["id"] = requestId;
     }
     else
-        requestId = -1;
+        requestId = 0;
 
     JsonWriter jsonStrWriter(os);
     request.Traverse(jsonStrWriter);
@@ -79,7 +79,7 @@ bool JsonClientHandler::GenerateRequest(const char* method, Value& params, Strea
     return true;
 }
 
-ProcessResponseEnum JsonClientHandler::ProcessResponse(char* response, int length, Value& result, int requestId, bool notification)
+ProcessResponseEnum JsonClientHandler::ProcessResponse(char* response, int length, Value& result, unsigned requestId, bool notification)
 {
     log_trace();
     ProcessResponseEnum processResponse = ProcessResponseErrorClose;
@@ -117,7 +117,7 @@ ProcessResponseEnum JsonClientHandler::ProcessResponse(char* response, int lengt
 
                     if (!rpc.IsString() || (strcmp(rpc.GetString(), "2.0") != 0))
                         GenerateFaultResult(AnyRpcErrorInvalidResponse, "Invalid response, rpc version", result);
-                    else if (!id.IsInt() || (id.GetInt() != requestId))
+                    else if (!id.IsUint() || (id.GetUint() != requestId))
                     {
                         log_debug("Invalid id:" << id << ", expected id=" << requestId);
                         GenerateFaultResult(AnyRpcErrorInvalidResponse, "Invalid response, bad id", result);

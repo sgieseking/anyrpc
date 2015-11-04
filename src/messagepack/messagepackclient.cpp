@@ -55,13 +55,13 @@ MessagePackTcpClient::MessagePackTcpClient(const char* host, int port) :
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool MessagePackClientHandler::GenerateRequest(const char* method, Value& params, Stream& os, int& requestId, bool notification)
+bool MessagePackClientHandler::GenerateRequest(const char* method, Value& params, Stream& os, unsigned& requestId, bool notification)
 {
     log_trace();
     Value request;
     if (notification)
     {
-        requestId = -1;
+        requestId = 0;
         request.SetSize(3);
         request[0] = 2;
         request[1] = method;
@@ -87,7 +87,7 @@ bool MessagePackClientHandler::GenerateRequest(const char* method, Value& params
     return true;
 }
 
-ProcessResponseEnum MessagePackClientHandler::ProcessResponse(char* response, int length, Value& result, int requestId, bool notification)
+ProcessResponseEnum MessagePackClientHandler::ProcessResponse(char* response, int length, Value& result, unsigned requestId, bool notification)
 {
     log_trace();
     ProcessResponseEnum processResponse = ProcessResponseErrorClose;
@@ -126,7 +126,7 @@ ProcessResponseEnum MessagePackClientHandler::ProcessResponse(char* response, in
 
                 if (!type.IsInt() || (type.GetInt() != 1))
                     GenerateFaultResult(AnyRpcErrorInvalidResponse, "Invalid response, wrong type", result);
-                else if (id.IsInvalid() || (id.GetInt() != requestId))
+                else if (id.IsInvalid() || (id.GetUint() != requestId))
                 {
                     log_debug("Invalid id:" << id << ", expected id=" << requestId);
                     GenerateFaultResult(AnyRpcErrorInvalidResponse, "Invalid response, bad id", result);

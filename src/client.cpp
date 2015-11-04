@@ -40,7 +40,7 @@ std::atomic<unsigned> ClientHandler::nextId_(1);
 unsigned ClientHandler::nextId_ = 1;
 #endif // defined(ANYRPC_THREADING)
 
-int ClientHandler::GetNextId()
+unsigned ClientHandler::GetNextId()
 {
     return nextId_++;
 }
@@ -323,7 +323,7 @@ bool Client::Connect(Value& result)
 
 bool Client::GenerateRequest(const char* method, Value& params, bool notification)
 {
-    int requestId;
+    unsigned requestId;
 
     bool result = handler_->GenerateRequest(method,params,request_,requestId,notification);
     requestId_.push_back(requestId);
@@ -420,8 +420,14 @@ bool Client::ReadResponse(Value& result)
 
 ProcessResponseEnum Client::ProcessResponse(Value& result, bool notification)
 {
-    int requestId = requestId_.front();
-    requestId_.pop_front();
+    log_trace();
+    unsigned requestId = 0;
+    // There should be an id in the list, but in case there isn't handle with default id of 0
+    if (!requestId_.empty())
+    {
+        requestId = requestId_.front();
+        requestId_.pop_front();
+    }
     responseProcessed_ = true;
     return handler_->ProcessResponse(response_,contentLength_,result,requestId,notification);
 }
@@ -496,8 +502,13 @@ int HttpClient::ProcessHeader(bool eof)
 ProcessResponseEnum HttpClient::ProcessResponse(Value& result, bool notification)
 {
     log_trace();
-    int requestId = requestId_.front();
-    requestId_.pop_front();
+    unsigned requestId = 0;
+    // There should be an id in the list, but in case there isn't handle with default id of 0
+    if (!requestId_.empty())
+    {
+        requestId = requestId_.front();
+        requestId_.pop_front();
+    }
     responseProcessed_ = true;
     ProcessResponseEnum processResult = handler_->ProcessResponse(response_,contentLength_,result,requestId,notification);
     if (!httpResponseState_.GetKeepAlive())
@@ -524,6 +535,7 @@ bool TcpClient::GenerateHeader()
 
 int TcpClient::ProcessHeader(bool eof)
 {
+    log_trace();
     // search for the length/body separator, ':'
     char* body = 0;
     char* header = buffer_;

@@ -47,8 +47,8 @@ class ANYRPC_API MessagePackClientHandler : public ClientHandler
 {
 public:
     MessagePackClientHandler() {}
-    virtual bool GenerateRequest(const char* method, Value& params, Stream& os, int& requestId, bool notification);
-    virtual ProcessResponseEnum ProcessResponse(char* response, int length, Value& result, int requestId, bool notification);
+    virtual bool GenerateRequest(const char* method, Value& params, Stream& os, unsigned& requestId, bool notification);
+    virtual ProcessResponseEnum ProcessResponse(char* response, int length, Value& result, unsigned requestId, bool notification);
 };
 
 } // namespace anyrpc

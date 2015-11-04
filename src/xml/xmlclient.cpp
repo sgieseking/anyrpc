@@ -53,7 +53,7 @@ XmlTcpClient::XmlTcpClient(const char* host, int port) :
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool XmlClientHandler::GenerateRequest(const char* method, Value& params, Stream& os, int& requestId, bool notification)
+bool XmlClientHandler::GenerateRequest(const char* method, Value& params, Stream& os, unsigned& requestId, bool notification)
 {
     log_trace();
 
@@ -86,7 +86,7 @@ bool XmlClientHandler::GenerateRequest(const char* method, Value& params, Stream
     return true;
 }
 
-ProcessResponseEnum XmlClientHandler::ProcessResponse(char* response, int length, Value& result, int requestId, bool notification)
+ProcessResponseEnum XmlClientHandler::ProcessResponse(char* response, int length, Value& result, unsigned requestId, bool notification)
 {
     log_trace();
     ProcessResponseEnum processResponse = ProcessResponseErrorClose;

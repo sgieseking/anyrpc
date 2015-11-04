@@ -55,11 +55,11 @@ public:
     virtual ~ClientHandler() {};
 
     //! Get the next unique id for protocols that require one
-    static int GetNextId();
+    static unsigned GetNextId();
     //! Generate the RPC request in the stream from the methods and parameters
-    virtual bool GenerateRequest(const char* method, Value& params, Stream& os, int& requestId, bool notification) = 0;
+    virtual bool GenerateRequest(const char* method, Value& params, Stream& os, unsigned& requestId, bool notification) = 0;
     //! Process the RPC response string.  The result will have any values returned.
-    virtual ProcessResponseEnum ProcessResponse(char* response, int length, Value& result, int requestId, bool notification) = 0;
+    virtual ProcessResponseEnum ProcessResponse(char* response, int length, Value& result, unsigned requestId, bool notification) = 0;
     //! Generate a value result value with the code and message
     virtual void GenerateFaultResult(int errorCode, std::string const& msg, Value& result);
 
@@ -155,7 +155,7 @@ protected:
 
     WriteSegmentedStream header_;           //!< Data for the request header
     WriteSegmentedStream request_;          //!< Data for the request body
-    std::list<int> requestId_;              //!< Id for the last request
+    std::list<unsigned> requestId_;         //!< Id for the last request
 
     static const int MaxBufferLength = 2048;
     static const int MaxContentLength = 1000000;

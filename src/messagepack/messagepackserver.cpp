@@ -73,7 +73,7 @@ bool MessagePackRpcHandler(MethodManager* manager, char* request, int length, St
 
             if (!type.IsInt() && (type.GetInt() != 0))
                 MessagePackGenerateFaultResponse(AnyRpcErrorInvalidRequest, "Invalid Request", nullValue, valueResponse);
-            else if (!id.IsInt())
+            else if (!id.IsUint())
                 MessagePackGenerateFaultResponse(AnyRpcErrorInvalidRequest, "Invalid Request", nullValue, valueResponse);
             else if (!method.IsString())
                 MessagePackGenerateFaultResponse(AnyRpcErrorInvalidRequest, "Invalid Request", nullValue, valueResponse);
