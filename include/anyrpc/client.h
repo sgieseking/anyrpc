@@ -161,20 +161,20 @@ protected:
     static const int MaxContentLength = 1000000;
 
     char buffer_[MaxBufferLength+1];        //!< Fixed buffer for the response header and possibly the body
-    int bufferLength_;                      //! Amount of data in the buffer_
-    int contentLength_;                     //! Number of bytes for the response body
+    int bufferLength_;                      //!< Amount of data in the buffer_
+    int contentLength_;                     //!< Number of bytes for the response body
 
-    char* response_;                        //! Pointer to the start of the response body
-    int contentAvail_;                      //! Number of bytes of the response in the buffer
-    bool responseAllocated_;                //! Whether the response pointer is allocated or just a pointer to buffer_
+    char* response_;                        //!< Pointer to the start of the response body
+    int contentAvail_;                      //!< Number of bytes of the response in the buffer
+    bool responseAllocated_;                //!< Whether the response pointer is allocated or just a pointer to buffer_
 
-    struct timeval startTime_;              //! Time that the request was started
+    struct timeval startTime_;              //!< Time that the request was started
 
-    std::string host_;                      //! Connection host name/IP address
-    int port_;                              //! Connection port
-    unsigned timeout_;                      //! Timeout value in milliseconds
+    std::string host_;                      //!< Connection host name/IP address
+    int port_;                              //!< Connection port
+    unsigned timeout_;                      //!< Timeout value in milliseconds
 
-    bool responseProcessed_;                //! The response has been process and buffer needs to be reclaimed
+    bool responseProcessed_;                //!< The response has been process and buffer needs to be reclaimed
 };
 
 ////////////////////////////////////////////////////////////////////////////////
