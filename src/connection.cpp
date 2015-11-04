@@ -381,7 +381,6 @@ bool HttpConnection::ReadHeader()
     contentAvail_ = bufferLength_ - bodyStartPos;
     keepAlive_ = httpRequestState_.GetKeepAlive();
 
-
     if (contentLength_ > MaxContentLength)
     {
         log_warn("Content-length too large=" << contentLength_ << ", max allowed=" << MaxContentLength);
@@ -420,34 +419,45 @@ bool HttpConnection::ExecuteRequest()
 
     std::string& requestContentType = httpRequestState_.GetContentType();
 
-    // find a handler that will work
-    RpcHandlerList::iterator it = handlers_.begin();
-    for (;it!= handlers_.end(); it++)
-        if ((*it).CanProcessContentType(requestContentType))
-            break;
-    if (it == handlers_.end())
+    if (httpRequestState_.GetMethod() == "POST")
     {
-        log_warn("Content type not supported by server, " << requestContentType);
-        Initialize();
-        return false;
+        // find a handler that will work
+        RpcHandlerList::iterator it = handlers_.begin();
+        for (;it!= handlers_.end(); it++)
+            if ((*it).CanProcessContentType(requestContentType))
+                break;
+        if (it == handlers_.end())
+        {
+            log_warn("Content type not supported by server, " << requestContentType);
+            Initialize();
+            return false;
+        }
+        else
+        {
+            (*it).HandleRequest(manager_, request_, contentLength_, response_);
+
+            log_debug("Response length=" << response_.Length());
+
+            std::string& responseContentType = (*it).GetResponseContentType();
+            if (responseContentType.length() == 0)
+                responseContentType = requestContentType;
+            GeneratePOSTResponseHeader(response_.Length(), responseContentType);
+        }
+    }
+    else if (httpRequestState_.GetMethod() == "OPTIONS")
+    {
+        GenerateOPTIONSResponseHeader();
     }
     else
     {
-        (*it).HandleRequest(manager_, request_, contentLength_, response_);
-
-        log_debug("Response length=" << response_.Length());
-
-        std::string& responseContentType = (*it).GetResponseContentType();
-        if (responseContentType.length() == 0)
-            responseContentType = requestContentType;
-        GenerateHeader(response_.Length(), responseContentType);
+        GenerateErrorResponseHeader(501, "Not Implemented");
     }
 
     connectionState_ = WRITE_RESPONSE;
     return true;
 }
 
-void HttpConnection::GenerateHeader(std::size_t bodySize, std::string& contentType)
+void HttpConnection::GeneratePOSTResponseHeader(std::size_t bodySize, std::string& contentType)
 {
     header_ << "HTTP/1.1 200 OK\r\n";
     header_ << "Server: " << ANYRPC_APP_NAME << " v" << ANYRPC_VERSION_STRING << "\r\n";
@@ -457,6 +467,26 @@ void HttpConnection::GenerateHeader(std::size_t bodySize, std::string& contentTy
         header_ << "Connection: close\r\n";
     header_ << "Content-Type: " << contentType << "\r\n";
     header_ << "Content-length: " << bodySize << "\r\n";
+    header_ << "\r\n";
+}
+
+void HttpConnection::GenerateOPTIONSResponseHeader()
+{
+    header_ << "HTTP/1.1 200 OK\r\n";
+    header_ << "Access-Control-Allow-Origin: *\r\n";
+    header_ << "Access-Control-Allow-Methods: POST\r\n";
+    header_ << "Access-Control-Max-Age: 1728000\r\n"; // 20 days max age
+    header_ << "Access-Control-Allow-Headers: Content-Type\r\n";
+    header_ << "Vary: Accept-Encoding, Origin\r\n";
+    header_ << "Keep-Alive: timeout=2, max=100\r\n";
+    header_ << "Connection: keep-alive\r\n";
+    header_ << "\r\n";
+}
+
+void HttpConnection::GenerateErrorResponseHeader(int code, std::string message)
+{
+    header_ << "HTTP/1.1 " << code << " " << message << "\r\n";
+    header_ << "Connection: close\r\n";
     header_ << "\r\n";
 }
 

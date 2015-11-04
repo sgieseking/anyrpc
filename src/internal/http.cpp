@@ -104,8 +104,8 @@ HttpHeader::ResultEnum HttpHeader::ProcessFirstLine(std::string &line)
     std::string first(line, 0, endPos1);
 
     // Parse the second element of the line
-    size_t endPos2 = line.rfind(' ');
-    if (endPos2 == endPos1)
+    size_t endPos2 = line.find(' ', endPos1+1);
+    if (endPos2 == std::string::npos)
     {
         log_warn("Bad first line: " << line);
         return HEADER_FAULT;
@@ -170,12 +170,8 @@ void HttpRequest::Initialize()
 HttpHeader::ResultEnum HttpRequest::ProcessFirstLine(std::string &first, std::string &second, std::string &third)
 {
     log_trace();
+
     // Set the method
-    if (first != "POST")
-    {
-        log_warn("POST method not found: " << first);
-        return HEADER_FAULT;
-    }
     method_ = first;
 
     // Set the Uri
@@ -255,7 +251,7 @@ HttpHeader::ResultEnum HttpRequest::Verify()
             return HEADER_FAULT;
         }
     }
-    if (contentLength_ <= 0)
+    if ((contentLength_ < 0) && (method_ == "POST"))
     {
         log_warn("Invalid content length: " << contentLength_);
         return HEADER_FAULT;

@@ -454,9 +454,8 @@ int HttpClient::ProcessHeader(bool eof)
     size_t bodyStartPos = httpResponseState_.GetBodyStartPos();
     size_t bufferSpaceAvail = MaxBufferLength - bodyStartPos;
 
-    contentLength_ = httpResponseState_.GetContentLength();
+    contentLength_ = std::max(0,httpResponseState_.GetContentLength());
     contentAvail_ = bufferLength_ - bodyStartPos;
-    //keepAlive_ = httpResponseState_.GetKeepAlive();
 
     if (contentLength_ > MaxContentLength)
     {
@@ -484,6 +483,12 @@ int HttpClient::ProcessHeader(bool eof)
     response_[contentAvail_] = 0;
 
     log_info("specified content length is " << contentLength_);
+
+    if (httpResponseState_.GetResponseCode() != "200")
+    {
+        log_warn("Response code indicates problem, code = " << httpResponseState_.GetResponseCode() << ", string = " << httpResponseState_.GetResponseString());
+        return HEADER_FAULT;
+    }
 
     return HEADER_COMPLETE;
 }

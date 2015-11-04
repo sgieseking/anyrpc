@@ -229,11 +229,12 @@ protected:
     virtual bool ExecuteRequest();
 
 private:
-    void GenerateHeader(std::size_t bodySize, std::string& contentType);
+    void GeneratePOSTResponseHeader(std::size_t bodySize, std::string& contentType);
+    void GenerateOPTIONSResponseHeader();
+    void GenerateErrorResponseHeader(int code, std::string message);
 
     internal::HttpRequest httpRequestState_;    //!< Processing of the HTTP header
     RpcHandlerList& handlers_;                  //!< List of RPC handlers to check
-
 };
 
 ////////////////////////////////////////////////////////////////////////////////
