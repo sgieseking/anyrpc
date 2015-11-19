@@ -92,6 +92,7 @@ If you are new to using CMake as a build tool, you may want to use cmake-gui ins
 	$ cd build
 	$ cmake-gui ..
 	$ make
+	$ sudo make install 
 	
 	The executables will be in the bin directory.
 	
