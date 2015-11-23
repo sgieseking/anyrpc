@@ -94,6 +94,9 @@ If you are new to using CMake as a build tool, you may want to use cmake-gui ins
 	$ make
 	
 	The executables will be in the bin directory.
+	To use the AnyRPC library with your application, you will want to install the files to the standard Linux folders.
+	
+	$ sudo make install
 	
 ### Building on Windows with Visual Studio
 
@@ -106,6 +109,7 @@ If you are new to using CMake as a build tool, you may want to use cmake-gui ins
 	Open the generated solution in Visual Studio.
 	Build the solution.
 	The executables will be in the bin/Release or bin/Debug directories.
+	To use the AnyRPC library with your application, they can be either included from these directories or copied to a local application directory.
 	
 ### Building on Windows in MinGW with MSys
 
@@ -117,6 +121,7 @@ If you are new to using CMake as a build tool, you may want to use cmake-gui ins
 	$ make
 	
 	The executables will be in the bin directory.
+    To use the AnyRPC library with your application, they can be either included from these directories or copied to a local application directory.
 
 ## Reasons for Development
 
