@@ -373,6 +373,7 @@ bool HttpConnection::ReadHeader()
     {
         case internal::HttpHeader::HEADER_FAULT         : Initialize(); return false;
         case internal::HttpHeader::HEADER_INCOMPLETE    : return true;
+        default                                         : ; // continue processing
     }
     size_t bodyStartPos = httpRequestState_.GetBodyStartPos();
     size_t bufferSpaceAvail = MaxBufferLength - bodyStartPos;

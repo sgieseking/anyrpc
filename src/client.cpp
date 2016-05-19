@@ -115,6 +115,7 @@ bool Client::Call(const char* method, Value& params, Value& result)
             {
                 case ProcessResponseSuccess       : return true;
                 case ProcessResponseErrorKeepOpen : return false;
+                default                           : ; // continue processing
             }
         }
     }
@@ -172,6 +173,7 @@ bool Client::GetPostResult(Value& result)
         {
             case ProcessResponseSuccess       : return true;
             case ProcessResponseErrorKeepOpen : return false;
+            default                           : ; // continue processing
         }
     }
 
@@ -455,6 +457,7 @@ int HttpClient::ProcessHeader(bool eof)
     {
         case internal::HttpHeader::HEADER_FAULT         : return HEADER_FAULT;
         case internal::HttpHeader::HEADER_INCOMPLETE    : return HEADER_INCOMPLETE;
+        default                                         : ; // continue processing
     }
 
     size_t bodyStartPos = httpResponseState_.GetBodyStartPos();
