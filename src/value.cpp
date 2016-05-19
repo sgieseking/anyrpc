@@ -1147,7 +1147,7 @@ bool Value::ConvertBase64()
     size_t length = GetStringLength();
 
     size_t convertedLength = Base64Decode(str, str, length);
-    if (convertedLength < 0)
+    if (convertedLength == 0)
     {
         log_fatal("Failed to convert from base64");
         return false;

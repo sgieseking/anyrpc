@@ -106,4 +106,4 @@ void MethodManager::FindHelpMethod(Value& params, Value& result)
     result = it->second->Help();
 }
 
-};
+}

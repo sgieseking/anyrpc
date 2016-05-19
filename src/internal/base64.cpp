@@ -115,7 +115,7 @@ bool Base64Decode(Stream& os, Stream &is, char termChar)
     {
         if (is.Peek() == termChar)
             return (avail == 0);
-        data[avail] = base64Decode[is.Get()];
+        data[avail] = base64Decode[static_cast<unsigned char>(is.Get())];
         if (data[avail] == base64Ignore)
             continue;
         if (data[avail] == base64Pad)
@@ -125,7 +125,7 @@ bool Base64Decode(Stream& os, Stream &is, char termChar)
             if (avail == 2)
             {
                 // verify that next character is a pad as well
-                if (base64Decode[is.Get()] != base64Pad)
+                if (base64Decode[static_cast<unsigned char>(is.Get())] != base64Pad)
                     return false;
                 // decode one bytes
                 os.Put( (data[0] << 2) + (data[1] >> 4));
