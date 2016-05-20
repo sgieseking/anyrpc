@@ -255,7 +255,7 @@ void ServerST::Work(int ms)
                     {
                         connection->Process();
                     }
-                    catch (AnyRpcException &fault)
+                    catch (AnyRpcException)
                     {
                         // anyrpc exceptions shouldn't get to this point but attempt to handle gracefully
                         connection->SetCloseState();
@@ -647,7 +647,7 @@ void ServerTP::Work(int ms)
                     {
                         connection->Process( false );
                     }
-                    catch (AnyRpcException &fault)
+                    catch (AnyRpcException)
                     {
                         // anyrpc exceptions shouldn't get to this point but attempt to handle gracefully
                         connection->SetCloseState();
@@ -730,7 +730,7 @@ void ServerTP::WorkerThread()
         {
             connection->Process();
         }
-        catch (AnyRpcException &fault)
+        catch (AnyRpcException)
         {
             // anyrpc exceptions shouldn't get to this point but attempt to handle gracefully
             connection->SetCloseState();
