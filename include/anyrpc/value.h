@@ -493,9 +493,9 @@ private:
     //! Copy the string as either a short string or with allocated memory.
     void CopyString(const char* s) { CopyString(s, strlen(s)); }
     //! Copy the string as either a short string or with allocated memory.
-    void CopyString(const char* s, int length);
+    void CopyString(const char* s, size_t length);
     //! Copy the binary data as either a short string or with allocated memory.
-    void CopyBinary(const unsigned char* s, int length);
+    void CopyBinary(const unsigned char* s, size_t length);
     //! Copy the value without destroying the original data.
     void RawAssign(Value& rhs);
     //! Compare the given String value to the current object.

@@ -50,7 +50,7 @@ int main()
     jsonStrWriter << value;
 
     const char *json = strStream.GetBuffer();
-    int jsonLength = strStream.Length();
+    size_t jsonLength = strStream.Length();
     cout << "Json data in string:" << endl << json << endl;
 
     // Use string data and parse in place.

@@ -377,7 +377,7 @@ bool Client::ReadHeader(Value& result)
     socket_.SetTimeout(0);
     while (true)
     {
-        int bytesRead;
+        size_t bytesRead;
         bool eof;
         socket_.Receive(buffer_+bufferLength_, MaxBufferLength-bufferLength_, bytesRead, eof, 0);
         if (socket_.FatalError())
@@ -410,7 +410,7 @@ bool Client::ReadResponse(Value& result)
     if (contentAvail_ >= contentLength_)
         return true;
 
-    int bytesRead;
+    size_t bytesRead;
     bool eof;
     bool receiveResult = socket_.Receive(response_+contentAvail_, contentLength_-contentAvail_, bytesRead, eof, GetTimeLeft());
     contentAvail_ += bytesRead;
@@ -584,7 +584,7 @@ int TcpClient::ProcessHeader(bool eof)
         return HEADER_FAULT;
     }
 
-    int bufferSpaceAvail = buffer_ + MaxBufferLength - body;
+    size_t bufferSpaceAvail = buffer_ + MaxBufferLength - body;
     contentAvail_ = end - body;
 
     if (contentLength_ > MaxContentLength)

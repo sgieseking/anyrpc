@@ -50,7 +50,7 @@ class ANYRPC_API XmlClientHandler : public ClientHandler
 public:
     XmlClientHandler() {}
     virtual bool GenerateRequest(const char* method, Value& params, Stream& os, unsigned& requestId, bool notification);
-    virtual ProcessResponseEnum ProcessResponse(char* response, int length, Value& result, unsigned requestId, bool notification);
+    virtual ProcessResponseEnum ProcessResponse(char* response, std::size_t length, Value& result, unsigned requestId, bool notification);
 };
 
 } // namespace anyrpc

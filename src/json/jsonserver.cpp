@@ -45,7 +45,7 @@ log_define("AnyRPC.RpcHandler");
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool JsonRpcHandler(MethodManager* manager, char* request, int length, Stream &response)
+bool JsonRpcHandler(MethodManager* manager, char* request, size_t length, Stream &response)
 {
     Document doc;
     Value valueResponse;

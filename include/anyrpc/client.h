@@ -59,7 +59,7 @@ public:
     //! Generate the RPC request in the stream from the methods and parameters
     virtual bool GenerateRequest(const char* method, Value& params, Stream& os, unsigned& requestId, bool notification) = 0;
     //! Process the RPC response string.  The result will have any values returned.
-    virtual ProcessResponseEnum ProcessResponse(char* response, int length, Value& result, unsigned requestId, bool notification) = 0;
+    virtual ProcessResponseEnum ProcessResponse(char* response, std::size_t length, Value& result, unsigned requestId, bool notification) = 0;
     //! Generate a value result value with the code and message
     virtual void GenerateFaultResult(int errorCode, std::string const& msg, Value& result);
 
@@ -157,15 +157,15 @@ protected:
     WriteSegmentedStream request_;          //!< Data for the request body
     std::list<unsigned> requestId_;         //!< Id for the last request
 
-    static const int MaxBufferLength = 2048;
-    static const int MaxContentLength = 1000000;
+    static const std::size_t MaxBufferLength = 2048;
+    static const std::size_t MaxContentLength = 1000000;
 
     char buffer_[MaxBufferLength+1];        //!< Fixed buffer for the response header and possibly the body
-    int bufferLength_;                      //!< Amount of data in the buffer_
-    int contentLength_;                     //!< Number of bytes for the response body
+	std::size_t bufferLength_;              //!< Amount of data in the buffer_
+	std::size_t contentLength_;             //!< Number of bytes for the response body
 
     char* response_;                        //!< Pointer to the start of the response body
-    int contentAvail_;                      //!< Number of bytes of the response in the buffer
+	std::size_t contentAvail_;              //!< Number of bytes of the response in the buffer
     bool responseAllocated_;                //!< Whether the response pointer is allocated or just a pointer to buffer_
 
     struct timeval startTime_;              //!< Time that the request was started

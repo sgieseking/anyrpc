@@ -46,7 +46,7 @@ log_define("AnyRPC.RpcHandler");
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool XmlRpcHandler(MethodManager* manager, char* request, int length, Stream &response)
+bool XmlRpcHandler(MethodManager* manager, char* request, size_t length, Stream &response)
 {
     InSituStringStream sstream(request, length);
     XmlReader reader(sstream);

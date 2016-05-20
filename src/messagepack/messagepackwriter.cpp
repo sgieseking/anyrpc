@@ -324,7 +324,7 @@ void MessagePackWriter::StartMap(size_t memberCount)
     if (memberCount < 16)
     {
         // use fixmap representation - up to 15 elements
-        os_.Put(MessagePackFixMap | memberCount);
+        os_.Put(static_cast<char>(MessagePackFixMap | memberCount));
     }
     else if (memberCount < 65536)
     {
@@ -363,7 +363,7 @@ void MessagePackWriter::StartArray(size_t elementCount)
     if (elementCount < 16)
     {
         // use fixarray representation - up to 15 elements
-        os_.Put(MessagePackFixArray | elementCount);
+        os_.Put(static_cast<char>(MessagePackFixArray | elementCount));
     }
     else if (elementCount < 65536)
     {

@@ -57,7 +57,7 @@ int main()
     xmlStrWriter << value;
 
     const char *xml = strStream.GetBuffer();
-    int xmlLength = strStream.Length();
+    size_t xmlLength = strStream.Length();
     cout << "Xml data in string:" << endl << xml << endl;
 
     // Use string data and parse in place.

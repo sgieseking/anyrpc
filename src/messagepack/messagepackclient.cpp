@@ -87,7 +87,7 @@ bool MessagePackClientHandler::GenerateRequest(const char* method, Value& params
     return true;
 }
 
-ProcessResponseEnum MessagePackClientHandler::ProcessResponse(char* response, int length, Value& result, unsigned requestId, bool notification)
+ProcessResponseEnum MessagePackClientHandler::ProcessResponse(char* response, size_t length, Value& result, unsigned requestId, bool notification)
 {
     log_trace();
     ProcessResponseEnum processResponse = ProcessResponseErrorClose;

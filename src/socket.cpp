@@ -271,7 +271,7 @@ bool TcpSocket::Send(const char* buffer, size_t length, size_t &bytesWritten, in
     gettimeofday( &startTime, 0 );
     while (true)
     {
-        int numBytes = send( fd_, buffer+bytesWritten, length-bytesWritten, MSG_NOSIGNAL );
+        int numBytes = send( fd_, buffer+bytesWritten, static_cast<int>(length-bytesWritten), MSG_NOSIGNAL );
         SetLastError();
         log_debug("Send: numBytes=" << numBytes << ", err=" << err_);
         if (numBytes < 0)
@@ -299,7 +299,7 @@ bool TcpSocket::Send(const char* buffer, size_t length, size_t &bytesWritten, in
     return false;
 }
 
-bool TcpSocket::Receive(char* buffer, int maxLength, int &bytesRead, bool &eof, int timeout)
+bool TcpSocket::Receive(char* buffer, size_t maxLength, size_t &bytesRead, bool &eof, int timeout)
 {
     if (timeout < 0) timeout = timeout_;    // default to the set timeout value
     timeout = std::max(0,timeout);          // timeout can't be negative
@@ -310,7 +310,7 @@ bool TcpSocket::Receive(char* buffer, int maxLength, int &bytesRead, bool &eof, 
     eof = false;
     while (bytesRead < maxLength)
     {
-        int numBytes = recv( fd_, buffer+bytesRead, maxLength-bytesRead, 0 );
+        int numBytes = recv( fd_, buffer+bytesRead, static_cast<int>(maxLength-bytesRead), 0 );
         SetLastError();  // the logging system may reset errno in Linux
         log_debug( "Receive: numBytes=" << numBytes << ", err=" << err_);
 
@@ -446,7 +446,7 @@ bool UdpSocket::Send(const char* buffer, std::size_t length, std::size_t &bytesW
     struct timeval startTime;
     gettimeofday( &startTime, 0 );
 
-    int numBytes = sendto( fd_, buffer+bytesWritten, length-bytesWritten, MSG_NOSIGNAL,
+    int numBytes = sendto( fd_, buffer+bytesWritten, static_cast<int>(length-bytesWritten), MSG_NOSIGNAL,
                             (struct sockaddr *)&sendAddr, sizeof(sendAddr) );
     SetLastError();
     log_debug("Send: numBytes=" << numBytes << ", err=" << err_);

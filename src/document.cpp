@@ -174,7 +174,7 @@ void Document::ArraySeparator()
     log_debug("ArraySeparator");
     anyrpc_assert( stack_.back()->IsValid(), AnyRpcErrorAccessInvalidValue, "Not valid, type=" << stack_.back()->GetType() );
     stack_.pop_back();
-    int size = stack_.back()->Size();
+    size_t size = stack_.back()->Size();
     Value value;
     stack_.back()->PushBack(value);
     stack_.push_back(&stack_.back()->at(size));

@@ -79,7 +79,7 @@ bool JsonClientHandler::GenerateRequest(const char* method, Value& params, Strea
     return true;
 }
 
-ProcessResponseEnum JsonClientHandler::ProcessResponse(char* response, int length, Value& result, unsigned requestId, bool notification)
+ProcessResponseEnum JsonClientHandler::ProcessResponse(char* response, size_t length, Value& result, unsigned requestId, bool notification)
 {
     log_trace();
     ProcessResponseEnum processResponse = ProcessResponseErrorClose;

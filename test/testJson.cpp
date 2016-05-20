@@ -89,7 +89,7 @@ static string ParseData(char* filename, string& inString)
 {
     FILE* fp = fopen(filename, "r");
     char buffer[65536];
-    int len = fread(buffer,1,65535,fp);
+    size_t len = fread(buffer,1,65535,fp);
     fclose(fp);
 
     buffer[len] = 0;

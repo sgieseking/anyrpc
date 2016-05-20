@@ -94,7 +94,7 @@ int main()
     cout << "Read back using MessagePack library:" << endl;
     FILE* fp = fopen(binFile,"r");
     char readBuffer[65536];
-    int length = fread(readBuffer, 1, sizeof(readBuffer), fp);
+    size_t length = fread(readBuffer, 1, sizeof(readBuffer), fp);
     unpack(readBuffer, length);
 #endif
 

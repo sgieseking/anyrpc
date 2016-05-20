@@ -48,7 +48,7 @@ class ANYRPC_API JsonClientHandler : public ClientHandler
 public:
     JsonClientHandler() {}
     virtual bool GenerateRequest(const char* method, Value& params, Stream& os, unsigned& requestId, bool notification);
-    virtual ProcessResponseEnum ProcessResponse(char* response, int length, Value& result, unsigned requestId, bool notification);
+    virtual ProcessResponseEnum ProcessResponse(char* response, size_t length, Value& result, unsigned requestId, bool notification);
 };
 
 

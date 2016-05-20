@@ -48,7 +48,7 @@ namespace anyrpc
  *  The request contains the data stream to parse for the type of request and parameters.
  *  The response will be placed in the Stream to send back to the client.
  */
-typedef bool RpcHandler(MethodManager* manager, char* request, int length, Stream &response);
+typedef bool RpcHandler(MethodManager* manager, char* request, std::size_t length, Stream &response);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -67,7 +67,7 @@ public:
         matchAnyContentType_(requestContentType==""){}
 
     //! Perform processing on the request using this handler
-    bool HandleRequest(MethodManager* manager, char* request, int length, Stream &response)
+    bool HandleRequest(MethodManager* manager, char* request, std::size_t length, Stream &response)
         { anyrpc_assert(handler_ != 0, AnyRpcErrorHandlerNotDefined, "The RPC handler was not defined");
           return handler_(manager,request,length,response); }
     //! Determine if this handler is able to process the given contentType
@@ -179,12 +179,12 @@ protected:
     static const int MaxContentLength = 1000000;
 
     char buffer_[MaxBufferLength+1];        //!< Fixed buffer for request header and possibly the body
-    int bufferLength_;                      //!< Amount of data in the buffer_
-    int contentLength_;                     //!< Number of bytes for the request body
+    std::size_t bufferLength_;              //!< Amount of data in the buffer_
+    std::size_t contentLength_;             //!< Number of bytes for the request body
     bool keepAlive_;                        //!< Indication that the connection should be keep alive after responding
 
     char* request_;                         //!< Pointer to the start of the request body
-    int contentAvail_;                      //!< Number of bytes of the request body in the buffer
+    std::size_t contentAvail_;              //!< Number of bytes of the request body in the buffer
     bool requestAllocated_;                 //!< Whether the request pointer is allocated or just a pointer to buffer_
 
     WriteSegmentedStream header_;           //!< Data for the response header

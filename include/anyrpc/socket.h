@@ -96,7 +96,7 @@ public:
     /*! The actual number of bytes received are returned in bytesRead.
      *  If the socket is detected as closed, then eof is set to true.
      */
-    bool Receive(char* str, int maxLength, int &bytesRead, bool &eof, int timeout=-1);
+    bool Receive(char* str, std::size_t maxLength, std::size_t &bytesRead, bool &eof, int timeout=-1);
 
     bool IsConnected(int timeout=-1);
 

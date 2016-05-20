@@ -264,7 +264,7 @@ bool Connection::ReadRequest()
     // If we don't have the entire request yet, read available data
     if (contentAvail_ < contentLength_)
     {
-        int bytesRead;
+        size_t bytesRead;
         bool eof;
         if (!socket_.Receive(request_+contentAvail_, contentLength_-contentAvail_, bytesRead, eof))
         {
@@ -358,7 +358,7 @@ void HttpConnection::Initialize(bool preserveBufferData)
 bool HttpConnection::ReadHeader()
 {
     // Read available data
-    int bytesRead;
+    size_t bytesRead;
     bool eof;
     if (!socket_.Receive(buffer_+bufferLength_, MaxBufferLength-bufferLength_, bytesRead, eof))
     {
@@ -496,7 +496,7 @@ void HttpConnection::GenerateErrorResponseHeader(int code, std::string message)
 bool TcpConnection::ReadHeader()
 {
     // Read available data
-    int bytesRead;
+    size_t bytesRead;
     bool eof;
     if (!socket_.Receive(buffer_+bufferLength_, MaxBufferLength-bufferLength_, bytesRead, eof))
     {
@@ -554,7 +554,7 @@ bool TcpConnection::ReadHeader()
         return false;
     }
 
-    int bufferSpaceAvail = buffer_ + MaxBufferLength - body;
+    size_t bufferSpaceAvail = buffer_ + MaxBufferLength - body;
     contentAvail_ = end - body;
 
     if (contentLength_ > MaxContentLength)

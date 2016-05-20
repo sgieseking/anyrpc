@@ -44,7 +44,7 @@ log_define("AnyRPC.RpcHandler");
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool MessagePackRpcHandler(MethodManager* manager, char* request, int length, Stream &response)
+bool MessagePackRpcHandler(MethodManager* manager, char* request, size_t length, Stream &response)
 {
     log_trace();
     Document doc;

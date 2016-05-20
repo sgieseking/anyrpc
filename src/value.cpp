@@ -144,7 +144,7 @@ Value::Value(double d) : flags_(NumberDoubleFlag)
 
 Value::Value(const char* s, bool copy) : flags_(ConstStringFlag)
 {
-    int length = strlen(s);
+    size_t length = strlen(s);
 
 #if BUILD_WITH_LOG4CPLUS
     if (length < 10)
@@ -411,7 +411,7 @@ void Value::AddMemberCheckCapacity()
         }
         else
         {
-            size_t oldCapacity = m.capacity;
+            uint32_t oldCapacity = m.capacity;
             m.capacity += (oldCapacity + 3) / 4; // grow by 25%
             m.members = reinterpret_cast<Member*>(realloc(m.members, m.capacity * sizeof(Member)));
         }
@@ -601,8 +601,8 @@ Value& Value::SetArray(std::size_t capacity)
 
     // allocate the data and set to invalid
     data_.a.elements = (Value*)calloc(capacity, sizeof(Value));
-    data_.a.capacity = capacity;
-    data_.a.size = capacity;
+    data_.a.capacity = static_cast<uint32_t>(capacity);
+    data_.a.size = static_cast<uint32_t>(capacity);
     return *this;
 }
 
@@ -633,7 +633,7 @@ Value& Value::Reserve(size_t newCapacity)
     if (newCapacity > data_.a.capacity)
     {
         data_.a.elements = (Value*)realloc(data_.a.elements, newCapacity * sizeof(Value));
-        data_.a.capacity = newCapacity;
+        data_.a.capacity = static_cast<uint32_t>(newCapacity);
     }
     return *this;
 }
@@ -647,7 +647,7 @@ Value& Value::SetSize(size_t newSize)
     if (newSize > data_.a.capacity)
     {
         data_.a.elements = (Value*)realloc(data_.a.elements, newSize * sizeof(Value));
-        data_.a.capacity = newSize;
+        data_.a.capacity = static_cast<uint32_t>(newSize);
     }
     if (newSize > data_.a.size)
     {
@@ -659,7 +659,7 @@ Value& Value::SetSize(size_t newSize)
         for (size_t i=newSize; i<data_.a.size; i++)
             data_.a.elements[i].~Value();
     }
-    data_.a.size = newSize;
+    data_.a.size = static_cast<uint32_t>(newSize);
     return *this;
 }
 
@@ -836,7 +836,7 @@ Value& Value::SetBinary(const unsigned char* s, size_t length, bool copy)
 }
 
 // Initialize this value as copy string with initial data, without calling destructor.
-void Value::CopyString(const char* s, int length)
+void Value::CopyString(const char* s, size_t length)
 {
     char *str = 0;
     if (ShortString::Usable(length))
@@ -860,7 +860,7 @@ void Value::CopyString(const char* s, int length)
 }
 
 // Initialize this value as copy binary with initial data, without calling destructor.
-void Value::CopyBinary(const unsigned char* s, int length)
+void Value::CopyBinary(const unsigned char* s, size_t length)
 {
     char *str = 0;
     if (ShortString::Usable(length))
@@ -963,8 +963,8 @@ std::ostream& Value::WriteStreamInternal(std::ostream& os) const
             char buffer[5];
             os << '(';
             const unsigned char* str = GetBinary();
-            int len = GetBinaryLength();
-            for (int i=0; i<len; i++)
+            size_t len = GetBinaryLength();
+            for (size_t i=0; i<len; i++)
             {
                 snprintf(buffer, sizeof(buffer), "%02x", *(str+i));
                 os << buffer;
