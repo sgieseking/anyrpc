@@ -130,7 +130,7 @@ void MessagePackReader::ParseKey()
         anyrpc_throw(AnyRpcErrorTermination, "Parsing was terminated");
 
     GetToken();
-    int length = -1;
+    size_t length = 0;
 
     // only allow string keys although the MessagePack spec allows other types
     if ((token_ >= MessagePackFixStr) && (token_ < MessagePackNil))
