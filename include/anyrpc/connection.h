@@ -119,13 +119,13 @@ typedef std::vector<RpcContentHandler> RpcHandlerList;
 class ANYRPC_API Connection
 {
 public:
-    Connection(int fd, MethodManager* manager);
+    Connection(SOCKET fd, MethodManager* manager);
     virtual ~Connection();
 
     //! Initialize the data to start processing a new request
     virtual void Initialize(bool preserveBufferData=false);
     //! Get the file descriptor for the socket - needed for select calls
-    virtual int GetFileDescriptor() { return socket_.GetFileDescriptor(); }
+    virtual SOCKET GetFileDescriptor() { return socket_.GetFileDescriptor(); }
     //! Process data from the socket being either readable or writable.
     virtual void Process(bool executeAfterRead = true);
     //! Indicate that this connection should be closed.
@@ -219,7 +219,7 @@ private:
 class ANYRPC_API HttpConnection : public Connection
 {
 public:
-    HttpConnection(int fd, MethodManager* manager, RpcHandlerList& handlers) :
+    HttpConnection(SOCKET fd, MethodManager* manager, RpcHandlerList& handlers) :
         Connection(fd, manager), handlers_(handlers) {}
 
     virtual void Initialize(bool preserveBufferData=false);
@@ -250,7 +250,7 @@ private:
 class ANYRPC_API TcpConnection : public Connection
 {
 public:
-    TcpConnection(int fd, MethodManager* manager, RpcHandler* handler) :
+    TcpConnection(SOCKET fd, MethodManager* manager, RpcHandler* handler) :
         Connection(fd, manager), handler_(handler), commaExpected_(false) {}
 
     virtual bool ForcedDisconnectAllowed() { return commaExpected_ ? (bufferLength_ <= 1) : (bufferLength_ == 0); }

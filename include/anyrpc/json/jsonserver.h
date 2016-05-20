@@ -34,7 +34,7 @@ public:
     JsonHttpServer() { AddHandler( &JsonRpcHandler, "", "application/json-rpc" ); }
 
 protected:
-    virtual Connection* CreateConnection(int fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ protected:
 class ANYRPC_API JsonTcpServer : public ServerST
 {
 protected:
-    virtual Connection* CreateConnection(int fd) { return new TcpConnection(fd, GetMethodManager(), &JsonRpcHandler); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new TcpConnection(fd, GetMethodManager(), &JsonRpcHandler); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ public:
     JsonHttpServerMT() { AddHandler( &JsonRpcHandler, "", "application/json-rpc" ); }
 
 protected:
-    virtual Connection* CreateConnection(int fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ protected:
 class ANYRPC_API JsonTcpServerMT : public ServerMT
 {
 protected:
-    virtual Connection* CreateConnection(int fd) { return new TcpConnection(fd, GetMethodManager(), &JsonRpcHandler); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new TcpConnection(fd, GetMethodManager(), &JsonRpcHandler); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ public:
     JsonHttpServerTP() { AddHandler( &JsonRpcHandler, "", "application/json-rpc" ); }
 
 protected:
-    virtual Connection* CreateConnection(int fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -81,7 +81,7 @@ protected:
 class ANYRPC_API JsonTcpServerTP : public ServerTP
 {
 protected:
-    virtual Connection* CreateConnection(int fd) { return new TcpConnection(fd, GetMethodManager(), &JsonRpcHandler); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new TcpConnection(fd, GetMethodManager(), &JsonRpcHandler); }
 };
 #endif
 

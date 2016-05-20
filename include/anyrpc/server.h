@@ -98,7 +98,7 @@ protected:
     log_define("AnyRPC.Server");
 
     //! Create a new connection using the supplied socket
-    virtual Connection* CreateConnection(int fd) = 0;
+    virtual Connection* CreateConnection(SOCKET fd) = 0;
     //! Add all of the protocol handlers to the list
     virtual void AddAllHandlers();
 
@@ -156,7 +156,7 @@ public:
     AnyHttpServer() { AddAllHandlers(); }
 
 protected:
-    virtual Connection* CreateConnection(int fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -194,7 +194,7 @@ public:
     AnyHttpServerMT() { AddAllHandlers(); }
 
 protected:
-    virtual Connection* CreateConnection(int fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -255,7 +255,7 @@ public:
     AnyHttpServerTP(unsigned numThreads) : ServerTP(numThreads) { AddAllHandlers(); }
 
 protected:
-    virtual Connection* CreateConnection(int fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
 
 private:
 };

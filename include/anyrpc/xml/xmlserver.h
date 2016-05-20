@@ -34,7 +34,7 @@ public:
     XmlHttpServer() { AddHandler( &XmlRpcHandler, "", "text/xml" ); }
 
 protected:
-    virtual Connection* CreateConnection(int fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ protected:
 class ANYRPC_API XmlTcpServer : public ServerST
 {
 protected:
-    virtual Connection* CreateConnection(int fd) { return new TcpConnection(fd, GetMethodManager(), &XmlRpcHandler); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new TcpConnection(fd, GetMethodManager(), &XmlRpcHandler); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ public:
     XmlHttpServerMT() { AddHandler( &XmlRpcHandler, "", "text/xml" ); }
 
 protected:
-    virtual Connection* CreateConnection(int fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ protected:
 class ANYRPC_API XmlTcpServerMT : public ServerMT
 {
 protected:
-    virtual Connection* CreateConnection(int fd) { return new TcpConnection(fd, GetMethodManager(), &XmlRpcHandler); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new TcpConnection(fd, GetMethodManager(), &XmlRpcHandler); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ public:
     XmlHttpServerTP() { AddHandler( &XmlRpcHandler, "", "text/xml" ); }
 
 protected:
-    virtual Connection* CreateConnection(int fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -81,7 +81,7 @@ protected:
 class ANYRPC_API XmlTcpServerTP : public ServerTP
 {
 protected:
-    virtual Connection* CreateConnection(int fd) { return new TcpConnection(fd, GetMethodManager(), &XmlRpcHandler); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new TcpConnection(fd, GetMethodManager(), &XmlRpcHandler); }
 };
 #endif
 

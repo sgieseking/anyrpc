@@ -54,7 +54,7 @@ bool RpcContentHandler::CanProcessContentType(std::string contentType)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Connection::Connection(int fd, MethodManager* manager) :
+Connection::Connection(SOCKET fd, MethodManager* manager) :
     manager_(manager)
 {
     connectionState_ = READ_HEADER;
@@ -182,7 +182,7 @@ void Connection::Work(int ms)
         FD_ZERO(&outFd);
 
         // add connection socket
-        int maxFd = socket_.GetFileDescriptor();
+        SOCKET maxFd = socket_.GetFileDescriptor();
         if (WaitForReadability())
             FD_SET(maxFd, &inFd);
         if (WaitForWritability())
@@ -191,7 +191,7 @@ void Connection::Work(int ms)
         // Check for events
         int nEvents;
         if (ms < 0)
-            nEvents = select(maxFd + 1, &inFd, &outFd, NULL, NULL);
+            nEvents = select(static_cast<int>(maxFd) + 1, &inFd, &outFd, NULL, NULL);
         else
         {
             gettimeofday( &currentTime, 0 );
@@ -200,14 +200,14 @@ void Connection::Work(int ms)
             struct timeval tv;
             tv.tv_sec = timeLeft / 1000;
             tv.tv_usec = (timeLeft - tv.tv_sec*1000) * 1000;
-            nEvents = select(maxFd + 1, &inFd, &outFd, NULL, &tv);
+            nEvents = select(static_cast<int>(maxFd) + 1, &inFd, &outFd, NULL, &tv);
         }
 
         if (nEvents < 0)
             break;
 
         // Process server events
-        int fd = GetFileDescriptor();
+        SOCKET fd = GetFileDescriptor();
         if ((FD_ISSET(fd, &inFd )) || (FD_ISSET(fd, &outFd)))
             Process();
 

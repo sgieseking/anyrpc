@@ -46,8 +46,8 @@ public:
     int SetKeepAliveInterval(int startTime, int interval, int probeCount);
     int SetNonBlocking();
 
-    int GetFileDescriptor() { return fd_; }
-    void SetFileDescriptor(int fd) { fd_ = fd; }
+    SOCKET GetFileDescriptor() { return fd_; }
+    void SetFileDescriptor(SOCKET fd) { fd_ = fd; }
 
     int Bind(int port);
 
@@ -63,7 +63,7 @@ protected:
 
     log_define("AnyRPC.Socket")
 
-    int fd_;                //!< Socket file descriptor
+    SOCKET fd_;             //!< Socket file descriptor
     int err_;               //!< Error from last socket function
     int timeout_;           //!< Timeout for functions in milliseconds
 };
@@ -83,7 +83,7 @@ class ANYRPC_API TcpSocket : public Socket
 public:
     TcpSocket() : connected_(false) { Create(); }
 
-    int Create();
+    SOCKET Create();
     int SetTcpNoDelay(int param=1);
 
     //! Send data on the socket.  The actual number of bytes written are returned in bytesWritten.
@@ -103,7 +103,7 @@ public:
     //! Used only by servers to listen on port after a bind
     int Listen(int backlog=5);
     //! Used only by servers to accept a connection
-    int Accept();
+    SOCKET Accept();
 
     //! Used only by clients to connect to an IpAddress at a specified port
     int Connect(const char* ipAddress, int port);
@@ -124,7 +124,7 @@ class ANYRPC_API UdpSocket : public Socket
 public:
     UdpSocket() { Create(); }
 
-    int Create();
+    SOCKET Create();
 
     //! Send data on the socket.  The actual number of bytes written are returned in bytesWritten.
     bool Send(const char* str, std::size_t len, std::size_t &bytesWritten, const char* ipAddress, int port);

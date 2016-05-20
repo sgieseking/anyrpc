@@ -34,7 +34,7 @@ public:
     MessagePackHttpServer() { AddHandler( &MessagePackRpcHandler, "", "application/messagepack-rpc" ); }
 
 protected:
-    virtual Connection* CreateConnection(int fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ protected:
 class ANYRPC_API MessagePackTcpServer : public ServerST
 {
 protected:
-    virtual Connection* CreateConnection(int fd) { return new TcpConnection(fd, GetMethodManager(), &MessagePackRpcHandler); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new TcpConnection(fd, GetMethodManager(), &MessagePackRpcHandler); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ public:
     MessagePackHttpServerMT() { AddHandler( &MessagePackRpcHandler, "", "application/messagepack-rpc" ); }
 
 protected:
-    virtual Connection* CreateConnection(int fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ protected:
 class ANYRPC_API MessagePackTcpServerMT : public ServerMT
 {
 protected:
-    virtual Connection* CreateConnection(int fd) { return new TcpConnection(fd, GetMethodManager(), &MessagePackRpcHandler); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new TcpConnection(fd, GetMethodManager(), &MessagePackRpcHandler); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ public:
     MessagePackHttpServerTP() { AddHandler( &MessagePackRpcHandler, "", "application/messagepack-rpc" ); }
 
 protected:
-    virtual Connection* CreateConnection(int fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -81,7 +81,7 @@ protected:
 class ANYRPC_API MessagePackTcpServerTP : public ServerTP
 {
 protected:
-    virtual Connection* CreateConnection(int fd) { return new TcpConnection(fd, GetMethodManager(), &MessagePackRpcHandler); }
+    virtual Connection* CreateConnection(SOCKET fd) { return new TcpConnection(fd, GetMethodManager(), &MessagePackRpcHandler); }
 };
 #endif
 

@@ -197,14 +197,14 @@ void ServerST::Work(int ms)
         FD_ZERO(&outFd);
 
         // add server socket
-        int maxFd = socket_.GetFileDescriptor();
+        SOCKET maxFd = socket_.GetFileDescriptor();
         FD_SET(maxFd, &inFd);
 
         // add connection sockets
         for (ConnectionList::iterator it = connections_.begin(); it != connections_.end(); it++)
         {
             Connection* connection = *it;
-            int fd = connection->GetFileDescriptor();
+            SOCKET fd = connection->GetFileDescriptor();
             if (connection->WaitForReadability())
             {
                 FD_SET(fd, &inFd);
@@ -220,7 +220,7 @@ void ServerST::Work(int ms)
         // Check for events
         int nEvents;
         if (ms < 0)
-            nEvents = select(maxFd + 1, &inFd, &outFd, NULL, NULL);
+            nEvents = select(static_cast<int>(maxFd) + 1, &inFd, &outFd, NULL, NULL);
         else
         {
             gettimeofday( &currentTime, 0 );
@@ -229,7 +229,7 @@ void ServerST::Work(int ms)
             struct timeval tv;
             tv.tv_sec = timeLeft / 1000;
             tv.tv_usec = (timeLeft - tv.tv_sec*1000) * 1000;
-            nEvents = select(maxFd + 1, &inFd, &outFd, NULL, &tv);
+            nEvents = select(static_cast<int>(maxFd) + 1, &inFd, &outFd, NULL, &tv);
         }
 
         if (nEvents < 0)
@@ -246,7 +246,7 @@ void ServerST::Work(int ms)
         {
             // save this iterator position and move to the next so you can erase if needed
             Connection* connection = *it;
-            int fd = connection->GetFileDescriptor();
+            SOCKET fd = connection->GetFileDescriptor();
             if (fd <= maxFd)
             {
                 if ((FD_ISSET(fd, &inFd)) || (FD_ISSET(fd, &outFd)))
@@ -293,7 +293,7 @@ void ServerST::Shutdown()
 
 void ServerST::AcceptConnection()
 {
-    int fd = socket_.Accept();
+    SOCKET fd = socket_.Accept();
     if (fd < 0)
     {
         log_warn("Could not accept connection, error=" << socket_.GetLastError());
@@ -359,13 +359,13 @@ void ServerMT::Work(int ms)
         FD_ZERO(&inFd);
 
         // add server socket
-        int maxFd = socket_.GetFileDescriptor();
+        SOCKET maxFd = socket_.GetFileDescriptor();
         FD_SET(maxFd, &inFd);
 
         // Check for events
         int nEvents;
         if (ms < 0)
-            nEvents = select(maxFd + 1, &inFd, NULL, NULL, NULL);
+            nEvents = select(static_cast<int>(maxFd) + 1, &inFd, NULL, NULL, NULL);
         else
         {
             gettimeofday( &currentTime, 0 );
@@ -374,7 +374,7 @@ void ServerMT::Work(int ms)
             struct timeval tv;
             tv.tv_sec = timeLeft / 1000;
             tv.tv_usec = (timeLeft - tv.tv_sec*1000) * 1000;
-            nEvents = select(maxFd + 1, &inFd, NULL, NULL, &tv);
+            nEvents = select(static_cast<int>(maxFd) + 1, &inFd, NULL, NULL, &tv);
         }
 
         if (nEvents < 0)
@@ -408,7 +408,7 @@ void ServerMT::Shutdown()
 void ServerMT::AcceptConnection()
 {
     log_trace();
-    int fd = socket_.Accept();
+    SOCKET fd = socket_.Accept();
     if (fd < 0)
     {
         log_warn("Could not accept connection, error=" << socket_.GetLastError());
@@ -578,11 +578,11 @@ void ServerTP::Work(int ms)
         FD_ZERO(&outFd);
 
         // add server socket
-        int maxFd = socket_.GetFileDescriptor();
+        SOCKET maxFd = socket_.GetFileDescriptor();
         FD_SET(maxFd, &inFd);
 
         // add signal socket
-        int fd = serverSignal_.GetFileDescriptor();
+        SOCKET fd = serverSignal_.GetFileDescriptor();
         maxFd = std::max(fd, maxFd);
         FD_SET(fd, &inFd);
 
@@ -608,7 +608,7 @@ void ServerTP::Work(int ms)
         // Check for events
         int nEvents;
         if (ms < 0)
-            nEvents = select(maxFd + 1, &inFd, &outFd, NULL, NULL);
+            nEvents = select(static_cast<int>(maxFd) + 1, &inFd, &outFd, NULL, NULL);
         else
         {
             gettimeofday( &currentTime, 0 );
@@ -617,7 +617,7 @@ void ServerTP::Work(int ms)
             struct timeval tv;
             tv.tv_sec = timeLeft / 1000;
             tv.tv_usec = (timeLeft - tv.tv_sec*1000) * 1000;
-            nEvents = select(maxFd + 1, &inFd, &outFd, NULL, &tv);
+            nEvents = select(static_cast<int>(maxFd) + 1, &inFd, &outFd, NULL, &tv);
         }
 
         if (nEvents < 0)

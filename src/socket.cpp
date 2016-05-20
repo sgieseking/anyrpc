@@ -200,7 +200,7 @@ bool Socket::WaitReadable(int timeout)
     FD_SET( fd_, &readfds );
 
     // check for readability
-    int selectResult = select( fd_+1, &readfds, 0, 0, &tval );
+    int selectResult = select( static_cast<int>(fd_) + 1, &readfds, 0, 0, &tval );
     if (selectResult <= 0)
     {
         log_debug("WaitReadable: Select result=" << selectResult);
@@ -231,7 +231,7 @@ bool Socket::WaitWritable(int timeout)
     FD_SET( fd_, &writefds );
 
     // check for readability
-    int selectResult = select( fd_+1, 0, &writefds, 0, &tval );
+    int selectResult = select( static_cast<int>(fd_) + 1, 0, &writefds, 0, &tval );
     if (selectResult <= 0)
     {
         log_debug("WaitWritable: Select result=" << selectResult);
@@ -244,7 +244,7 @@ bool Socket::WaitWritable(int timeout)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-int TcpSocket::Create()
+SOCKET TcpSocket::Create()
 {
     fd_ = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
     connected_ = false;
@@ -367,7 +367,7 @@ bool TcpSocket::IsConnected(int timeout)
     FD_SET( fd_, &writefds );
 
     // check for writability
-    int selectResult = select( fd_+1, 0, &writefds, 0, &tval );
+    int selectResult = select( static_cast<int>(fd_) + 1, 0, &writefds, 0, &tval );
     if (selectResult <= 0)
     {
         log_warn("IsConnected failed: Select result=" << selectResult);
@@ -395,9 +395,9 @@ int TcpSocket::Listen(int backlog)
     return result;
 }
 
-int TcpSocket::Accept()
+SOCKET TcpSocket::Accept()
 {
-    int result = accept( fd_, 0, 0 );
+    SOCKET result = accept( fd_, 0, 0 );
     log_debug("Accept: result=" << result);
     SetLastError();
     return result;
@@ -424,7 +424,7 @@ int TcpSocket::Connect(const char* ipAddress, int port)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-int UdpSocket::Create()
+SOCKET UdpSocket::Create()
 {
     fd_ = socket( AF_INET, SOCK_DGRAM, 0 );
     log_debug( "Create: fd=" << fd_);
