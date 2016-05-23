@@ -15,9 +15,9 @@ log_define("main");
  *  The parameters to the application are strictly positions so that a
  *  command line parser in not needed.
  *
- *  Param 1 : client type - defaults to jsonhttp
+ *  Param 1 : client type - must be defined
  *  Param 2 : IpAddress for the server - defaults to 127.0.0.1
- *  Param 3 : Port for the server - defaults to 6000
+ *  Param 3 : Port for the server - defaults to 9000
  *  Param 4 : Number of clients - only useful if threading is enabled
  *
  *  When testing with multiple clients, you should start the server with
