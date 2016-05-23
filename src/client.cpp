@@ -576,13 +576,14 @@ int TcpClient::ProcessHeader(bool eof)
         header++;
     }
 
-    contentLength_ = atoi(header);
-    if (contentLength_ <= 0)
+    int contentLength = atoi(header);
+    if (contentLength <= 0)
     {
         log_warn("Invalid string length specified " << contentLength_);
         log_warn("bufferLength=" << bufferLength_ << ", buffer=" << buffer_);
         return HEADER_FAULT;
     }
+    contentLength_ = static_cast<size_t>(contentLength);
 
     size_t bufferSpaceAvail = buffer_ + MaxBufferLength - body;
     contentAvail_ = end - body;

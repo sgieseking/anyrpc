@@ -175,8 +175,8 @@ protected:
     time_t lastTransactionTime_;            //!< Time when the last transaction occurred - used to set priority for forced disconnect
     bool active_;
 
-    static const int MaxBufferLength = 2048;
-    static const int MaxContentLength = 1000000;
+    static const std::size_t MaxBufferLength = 2048;
+    static const std::size_t MaxContentLength = 1000000;
 
     char buffer_[MaxBufferLength+1];        //!< Fixed buffer for request header and possibly the body
     std::size_t bufferLength_;              //!< Amount of data in the buffer_

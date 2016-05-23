@@ -389,8 +389,10 @@ private:
 
     static const int TypeMask = 0xFF;
 
-    static const std::size_t DefaultArrayCapacity = 16;
-    static const std::size_t DefaultMapCapacity = 16;
+    static const std::size_t    DefaultArrayCapacity    = 16;
+    static const std::size_t    MaxArrayCapacity        = 16*1024*1024;     // must be less than 2^32 / sizeof(Value) on 32-bit compilation
+    static const uint32_t       DefaultMapCapacity      = 16;
+    static const uint32_t       MaxMapCapacity          = 16*1024*1024;     // must be less than 2^32 / sizeof(Member) on 32-bit compilation
 
     //! Allocated or referenced string, part of Data union: 8 bytes in 32-bit mode, 16 bytes in 64-bit mode
     struct String

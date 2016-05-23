@@ -411,11 +411,15 @@ void Value::AddMemberCheckCapacity()
         }
         else
         {
-            uint32_t oldCapacity = m.capacity;
-            m.capacity += (oldCapacity + 3) / 4; // grow by 25%
+            uint32_t newCapacity = m.capacity + (m.capacity + 3) / 4;  // grow by 25%, assumes this will still be 32-bits
+            if (newCapacity > MaxMapCapacity)   // gcc didn't like using std::max() with MaxMapCapacity
+                newCapacity = MaxMapCapacity;
+            m.capacity = newCapacity;
             m.members = reinterpret_cast<Member*>(realloc(m.members, m.capacity * sizeof(Member)));
         }
     }
+    anyrpc_assert(m.size < m.capacity, AnyRpcErrorMemoryAllocation, "Too many members, size=" << m.size << ", capacity=" << m.capacity);
+
     // initialize the next member as invalid
     data_.m.members[m.size].key.flags_ = InvalidFlag;
     data_.m.members[m.size].value.flags_ = InvalidFlag;
@@ -599,6 +603,8 @@ Value& Value::SetArray(std::size_t capacity)
     this->~Value();
     new (this) Value(ArrayType);
 
+    anyrpc_assert(capacity < MaxArrayCapacity, AnyRpcErrorMemoryAllocation, "Too many elements, size=" << capacity << ", capacity=" << MaxArrayCapacity);
+
     // allocate the data and set to invalid
     data_.a.elements = (Value*)calloc(capacity, sizeof(Value));
     data_.a.capacity = static_cast<uint32_t>(capacity);
@@ -630,6 +636,8 @@ Value& Value::Reserve(size_t newCapacity)
 {
     log_debug("Reserve: newCapacity=" << newCapacity);
     anyrpc_assert(IsArray(), AnyRpcErrorValueAccess, "Not Array, type=" << GetType());
+    anyrpc_assert(newCapacity < MaxArrayCapacity, AnyRpcErrorMemoryAllocation, "Too many elements, size=" << newCapacity << ", capacity=" << MaxArrayCapacity);
+
     if (newCapacity > data_.a.capacity)
     {
         data_.a.elements = (Value*)realloc(data_.a.elements, newCapacity * sizeof(Value));
@@ -644,6 +652,8 @@ Value& Value::SetSize(size_t newSize)
     if (IsInvalid())
         SetArray();
     anyrpc_assert(IsArray(), AnyRpcErrorValueAccess, "Not Array, type=" << GetType());
+    anyrpc_assert(newSize < MaxArrayCapacity, AnyRpcErrorMemoryAllocation, "Too many elements, size=" << newSize << ", capacity=" << MaxArrayCapacity);
+
     if (newSize > data_.a.capacity)
     {
         data_.a.elements = (Value*)realloc(data_.a.elements, newSize * sizeof(Value));
