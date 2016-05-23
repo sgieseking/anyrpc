@@ -388,7 +388,7 @@ bool HttpConnection::ReadHeader()
         Initialize();
         return false;
     }
-    if (contentLength_ > (int)bufferSpaceAvail)
+    if (contentLength_ > bufferSpaceAvail)
     {
         // try to malloc the buffer space needed
         request_ = static_cast<char*>(calloc(contentLength_+1,1));

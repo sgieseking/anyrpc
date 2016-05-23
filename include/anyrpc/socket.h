@@ -21,6 +21,10 @@
 #ifndef ANYRPC_SOCKET_H_
 #define ANYRPC_SOCKET_H_
 
+#if !defined(WIN32)
+typedef int SOCKET;     //!< SOCKET is used by Windows instead of int
+#endif  // _WIN32
+
 namespace anyrpc
 {
 

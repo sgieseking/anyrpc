@@ -471,7 +471,7 @@ int HttpClient::ProcessHeader(bool eof)
         log_warn("Content-length too large=" << contentLength_ << ", max allowed=" << MaxContentLength);
         return HEADER_FAULT;
     }
-    if (contentLength_ > (int)bufferSpaceAvail)
+    if (contentLength_ > bufferSpaceAvail)
     {
         // try to malloc the buffer space needed
         response_ = static_cast<char*>(malloc(contentLength_+1));
