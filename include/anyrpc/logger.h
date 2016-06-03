@@ -73,7 +73,7 @@ ANYRPC_API void InitializeLogger();
 # define log_fatal_if(cond, expr) do { if (cond) LOG4CPLUS_FATAL(_getStaticLogger(), expr); } while(false)
 # define log_error_if(cond, expr) do { if (cond) LOG4CPLUS_ERROR(_getStaticLogger(), expr); } while(false)
 # define log_warn_if(cond, expr)  do { if (cond) LOG4CPLUS_WARN( _getStaticLogger(), expr); } while(false)
-# define log_info_if(cond, expr)  do { if (cond) LOG4CPLUS_IFNO( _getStaticLogger(), expr); } while(false)
+# define log_info_if(cond, expr)  do { if (cond) LOG4CPLUS_INFO( _getStaticLogger(), expr); } while(false)
 # define log_debug_if(cond, expr) do { if (cond) LOG4CPLUS_DEBUG(_getStaticLogger(), expr); } while(false)
 #else
 # define log_fatal_if(cond, expr)
@@ -106,8 +106,8 @@ private:
 
     log4cplus::Logger logger;
     log4cplus::LogLevel loglevel;
-    log4cplus::tstring msg;
     bool timing;
+    log4cplus::tstring msg;
     const char* file;
     const char* function;
     int line;
