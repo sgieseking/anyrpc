@@ -127,8 +127,8 @@ public:
     void Clear() { code_ = AnyRpcErrorNone; }
 
 private:
-    std::string message_;       //!< Message associated with the error
     int code_;                  //!< Code for the error
+    std::string message_;       //!< Message associated with the error
     std::size_t offset_;        //!< Offset from the start of the document for a parse error
 };
 
