@@ -82,14 +82,13 @@ private:
     log_define("AnyRPC.RpcHandler");
 
     RpcHandler* handler_;               //!< Function pointer to RPC handler
-    bool matchAnyContentType_;          //!< Flag indicating that any content-type can be used
 #if defined(ANYRPC_REGEX)
     std::regex requestContentType_;     //!< Regular express to match with the HTTP request content-type
 #else
     std::string requestContentType_;    //!< String to match with the HTTP request content-type
 #endif // #if defined(ANYRPC_REGEX)
-
     std::string responseContentType_;   //!< String to use in the HTTP response content-type field
+    bool matchAnyContentType_;          //!< Flag indicating that any content-type can be used
 };
 
 //! A list of RpcContentHandlers that can be used to process a message
