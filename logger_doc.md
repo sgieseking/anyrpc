@@ -2,7 +2,7 @@
 
 ## Overview
 
-AnyRPC uses Log4cplus as its basis for logging in the system.
+AnyRPC uses Log4cplus v2.0 as its basis for logging in the system.
 This can be separately enabled with the BUILD_WITH_LOG4CPLUS option.
 The Log4cplus system is relatively low overhead so it is suggested
 to include it unless you are having problems with building with the

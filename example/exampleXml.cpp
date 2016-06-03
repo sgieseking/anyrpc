@@ -1,6 +1,5 @@
 
 #include "anyrpc/anyrpc.h"
-#include "anyrpc/logger.h"
 #include <iostream>
 #include <fstream>
 #include <cctype>

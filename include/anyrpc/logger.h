@@ -21,13 +21,15 @@
 #ifndef ANYRPC_LOGGER_H
 #define ANYRPC_LOGGER_H
 
-#if defined(BUILD_WITH_LOG4CPLUS)
-# include <log4cplus/logger.h>
-# include <log4cplus/loggingmacros.h>
-# include <log4cplus/helpers/timehelper.h>
+#if BUILD_WITH_LOG4CPLUS
+# include <log4cplus/log4cplus.h>
+# define InitializeLogger() \
+    log4cplus::Initializer initializer; \
+    log4cplus::PropertyConfigurator config(LOG4CPLUS_TEXT("log4cplus.properties")); \
+    config.configure();
+#else
+# define InitializeLogger()
 #endif
-
-ANYRPC_API void InitializeLogger();
 
 #if defined(BUILD_WITH_LOG4CPLUS)
 # define ANYRPC_FUNCTION_NAME() LOG4CPLUS_MACRO_FUNCTION()

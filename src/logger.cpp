@@ -30,14 +30,6 @@
 
 using namespace anyrpc;
 
-void InitializeLogger()
-{
-#if BUILD_WITH_LOG4CPLUS
-    log4cplus::initialize ();
-    log4cplus::PropertyConfigurator::doConfigure(LOG4CPLUS_TEXT("log4cplus.properties"));
-#endif
-}
-
 #if BUILD_WITH_LOG4CPLUS
 TimeLogger::TimeLogger(const log4cplus::Logger& l,
 		log4cplus::LogLevel ll,
