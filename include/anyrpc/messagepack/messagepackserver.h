@@ -80,6 +80,8 @@ protected:
 
 class ANYRPC_API MessagePackTcpServerTP : public ServerTP
 {
+public:
+	MessagePackTcpServerTP(const unsigned numThreads) : ServerTP(numThreads) {};
 protected:
     virtual Connection* CreateConnection(SOCKET fd) { return new TcpConnection(fd, GetMethodManager(), &MessagePackRpcHandler); }
 };

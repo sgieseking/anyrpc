@@ -80,6 +80,8 @@ protected:
 
 class ANYRPC_API XmlTcpServerTP : public ServerTP
 {
+public:
+	XmlTcpServerTP(const unsigned numThreads) : ServerTP(numThreads) {};
 protected:
     virtual Connection* CreateConnection(SOCKET fd) { return new TcpConnection(fd, GetMethodManager(), &XmlRpcHandler); }
 };

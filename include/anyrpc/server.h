@@ -252,7 +252,7 @@ class ANYRPC_API AnyHttpServerTP : public ServerTP
 {
 public:
     AnyHttpServerTP() { AddAllHandlers(); }
-    AnyHttpServerTP(unsigned numThreads) : ServerTP(numThreads) { AddAllHandlers(); }
+    AnyHttpServerTP(const unsigned numThreads) : ServerTP(numThreads) { AddAllHandlers(); }
 
 protected:
     virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
