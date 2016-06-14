@@ -71,7 +71,7 @@ class ANYRPC_API MessagePackHttpServerTP : public ServerTP
 {
 public:
     MessagePackHttpServerTP() { AddHandler( &MessagePackRpcHandler, "", "application/messagepack-rpc" ); }
-
+	MessagePackHttpServerTP(const unsigned numThreads) : ServerTP(numThreads) {};
 protected:
     virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
 };

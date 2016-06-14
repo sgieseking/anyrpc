@@ -71,6 +71,7 @@ class ANYRPC_API JsonHttpServerTP : public ServerTP
 {
 public:
     JsonHttpServerTP() { AddHandler( &JsonRpcHandler, "", "application/json-rpc" ); }
+	JsonHttpServerTP(const unsigned numThreads) : ServerTP(numThreads) {};
 
 protected:
     virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
