@@ -71,6 +71,7 @@ class ANYRPC_API XmlHttpServerTP : public ServerTP
 {
 public:
     XmlHttpServerTP() { AddHandler( &XmlRpcHandler, "", "text/xml" ); }
+    XmlHttpServerTP(const unsigned numThreads) : ServerTP(numThreads) { AddHandler( &XmlRpcHandler, "", "text/xml" ); }
 
 protected:
     virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
@@ -80,6 +81,10 @@ protected:
 
 class ANYRPC_API XmlTcpServerTP : public ServerTP
 {
+public:
+    XmlTcpServerTP() : ServerTP() {};
+    XmlTcpServerTP(const unsigned numThreads) : ServerTP(numThreads) {};
+
 protected:
     virtual Connection* CreateConnection(SOCKET fd) { return new TcpConnection(fd, GetMethodManager(), &XmlRpcHandler); }
 };

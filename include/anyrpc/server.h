@@ -224,7 +224,7 @@ class ANYRPC_API ServerTP : public ServerST
 {
 public:
     ServerTP() : numThreads_(4), workerExit_(false) {}
-    ServerTP(unsigned numThreads) : numThreads_(numThreads), workerExit_(false) {}
+    ServerTP(const unsigned numThreads) : numThreads_(numThreads), workerExit_(false) {}
 
     virtual bool BindAndListen(int port, int backlog = 5);
     virtual void StartThread();
@@ -252,7 +252,7 @@ class ANYRPC_API AnyHttpServerTP : public ServerTP
 {
 public:
     AnyHttpServerTP() { AddAllHandlers(); }
-    AnyHttpServerTP(unsigned numThreads) : ServerTP(numThreads) { AddAllHandlers(); }
+    AnyHttpServerTP(const unsigned numThreads) : ServerTP(numThreads) { AddAllHandlers(); }
 
 protected:
     virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }

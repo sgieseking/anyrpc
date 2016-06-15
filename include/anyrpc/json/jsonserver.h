@@ -71,6 +71,7 @@ class ANYRPC_API JsonHttpServerTP : public ServerTP
 {
 public:
     JsonHttpServerTP() { AddHandler( &JsonRpcHandler, "", "application/json-rpc" ); }
+    JsonHttpServerTP(const unsigned numThreads) : ServerTP(numThreads) { AddHandler( &JsonRpcHandler, "", "application/json-rpc" ); }
 
 protected:
     virtual Connection* CreateConnection(SOCKET fd) { return new HttpConnection(fd, GetMethodManager(), GetRpcHandlerList()); }
@@ -80,6 +81,10 @@ protected:
 
 class ANYRPC_API JsonTcpServerTP : public ServerTP
 {
+public:
+    JsonTcpServerTP() : ServerTP() {};
+    JsonTcpServerTP(const unsigned numThreads) : ServerTP(numThreads) {};
+
 protected:
     virtual Connection* CreateConnection(SOCKET fd) { return new TcpConnection(fd, GetMethodManager(), &JsonRpcHandler); }
 };
