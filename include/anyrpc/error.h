@@ -74,6 +74,8 @@ enum ANYRPC_API AnyRpcErrorCode
     AnyRpcErrorMethodNotFound                       = -32601,   //!< RPC method requested is not defined
     AnyRpcErrorInvalidParams                        = -32602,   //!< RPC method parameters invalid
     AnyRpcErrorInternalError                        = -32603,   //!< RPC internal error
+    AnyRpcErrorMethodRedefine                       = -32604,   //!< RPC attempt to redefine method
+    AnyRpcErrorFunctionRedefine                     = -32605,   //!< RPC attempt to redefine function
 
     // Parse Errors
     AnyRpcErrorParseError                           = -32700,   //!< Generic parse error

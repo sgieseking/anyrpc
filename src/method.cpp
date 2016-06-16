@@ -64,16 +64,34 @@ void MethodManager::AddFunction(Function* function, std::string const& name, std
 {
     MethodMap::const_iterator it = methods_.find(name);
     if (it == methods_.end())
+    {
         // not found so add new method
         methods_[name] = new MethodFunction(function,name,help);
+    }
+    else
+    {
+        // function already defined, throw exception
+        // the user can catch and ignore the exception if this behavior is desired
+        anyrpc_throw(AnyRpcErrorFunctionRedefine, "Attempt to redefine function name: " + name);
+    }
 }
 
 void MethodManager::AddMethod(Method* method)
 {
     MethodMap::const_iterator it = methods_.find(method->Name());
     if (it == methods_.end())
+    {
         // not found so add new method
         methods_[method->Name()] = method;
+    }
+    else
+    {
+        // method already defined, clean up then throw exception
+        // the user can catch and ignore the exception if this behavior is desired
+        if (method->DeleteOnRemove())
+            delete method;
+        anyrpc_throw(AnyRpcErrorMethodRedefine, "Attempt to redefine method name: " + method->Name());
+    }
 }
 
 bool MethodManager::ExecuteMethod(std::string const& name, Value& params, Value& result)
