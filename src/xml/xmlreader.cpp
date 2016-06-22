@@ -37,28 +37,28 @@ namespace anyrpc
 enum XmlTagEnum
 {
     invalidTag = -1,
-    valueTag,           valueETag,
-    booleanTag,         booleanETag,
-    doubleTag,          doubleETag,
-    intTag,             intETag,
-    i4Tag,              i4ETag,
-    i8Tag,              i8ETag,
-    stringTag,          stringETag,
-    emptyTag,           emptyETag,
-    dateTimeTag,        dateTimeETag,
-    base64Tag,          base64ETag,
-    nilTag,             nilETag,
-    arrayTag,           arrayETag,
-    dataTag,            dataETag,
-    structTag,          structETag,
-    memberTag,          memberETag,
-    nameTag,            nameETag,
-    methodCallTag,      methodCallETag,
-    methodNameTag,      methodNameETag,
-    methodResponseTag,  methodResponseETag,
-    paramsTag,          paramsETag,
-    paramTag,           paramETag,
-    faultTag,           faultETag,
+    valueTag,           valueEndTag,           valueEmptyTag,
+    booleanTag,         booleanEndTag,         booleanEmptyTag,
+    doubleTag,          doubleEndTag,          doubleEmptyTag,
+    intTag,             intEndTag,             intEmptyTag,
+    i4Tag,              i4EndTag,              i4EmptyTag,
+    i8Tag,              i8EndTag,              i8EmptyTag,
+    stringTag,          stringEndTag,          stringEmptyTag,
+    emptyTag,           emptyEndTag,           emptyEmptyTag,
+    dateTimeTag,        dateTimeEndTag,        dateTimeEmptyTag,
+    base64Tag,          base64EndTag,          base64EmptyTag,
+    nilTag,             nilEndTag,             nilEmptyTag,
+    arrayTag,           arrayEndTag,           arrayEmptyTag,
+    dataTag,            dataEndTag,            dataEmptyTag,
+    structTag,          structEndTag,          structEmptyTag,
+    memberTag,          memberEndTag,          memberEmptyTag,
+    nameTag,            nameEndTag,            nameEmptyTag,
+    methodCallTag,      methodCallEndTag,      methodCallEmptyTag,
+    methodNameTag,      methodNameEndTag,      methodNameEmptyTag,
+    methodResponseTag,  methodResponseEndTag,  methodResponseEmptyTag,
+    paramsTag,          paramsEndTag,          paramsEmptyTag,
+    paramTag,           paramEndTag,           paramEmptyTag,
+    faultTag,           faultEndTag,           faultEmptyTag,
 };
 
 typedef struct
@@ -141,7 +141,7 @@ std::string XmlReader::ParseMethod()
         ParseStringToStream(wsstream);
 
         // The next tag should be the methodName end tag
-        if (GetNextTag() != methodNameETag)
+        if (GetNextTag() != methodNameEndTag)
             anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
     }
     catch (AnyRpcException &fault)
@@ -197,15 +197,20 @@ void XmlReader::ParseResponse(Handler& handler)
             case paramsTag :
             {
                 ParseParams(true);
-                if (GetNextTag() != methodResponseETag)
+                if (GetNextTag() != methodResponseEndTag)
                     anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
+                break;
+            }
+            case paramsEmptyTag :
+            {
+                handler_->Null();
                 break;
             }
             case faultTag :
             {
                 ParseValue();
-                if ((GetNextTag() != faultETag) &&
-                    (GetNextTag() != methodResponseETag))
+                if ((GetNextTag() != faultEndTag) &&
+                    (GetNextTag() != methodResponseEndTag))
                     anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
                 break;
             }
@@ -223,29 +228,44 @@ void XmlReader::ParseResponse(Handler& handler)
     handler.EndDocument();
 }
 
-void XmlReader::ParseParams(bool paramsParsed)
+void XmlReader::ParseParams(bool paramsTagParsed)
 {
-    if (!paramsParsed && (GetNextTag() != paramsTag))
-        anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
-
     handler_->StartArray();
 
-    for (size_t elementCount = 0; ;elementCount++)
+    if (!paramsTagParsed)
+    {
+        int nextTag = GetNextTag();
+        if (nextTag == paramsEmptyTag)
+        {
+            // same as <params></params> so use an array with 0 elements
+            handler_->EndArray();
+            return;
+        }
+        if (nextTag != paramsTag)
+            anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
+    }
+
+    size_t elementCount = 0;
+    while (true)
     {
         switch (GetNextTag())
         {
             case paramTag :
             {
-                if (GetNextTag() != valueTag)
-                    anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
                 if (elementCount != 0)
                     handler_->ArraySeparator();
-                ParseValue(true);
-                if (GetNextTag() != paramETag)
+
+                switch (GetNextTag())
+                {
+                    case valueTag      : ParseValue(true);   break;
+                    case valueEmptyTag : ParseEmptyString(); break;  // same as <value><value/>, empty string
+                    default            : anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
+                }
+                if (GetNextTag() != paramEndTag)
                     anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
                 break;
             }
-            case paramsETag :
+            case paramsEndTag :
             {
                 handler_->EndArray(elementCount);
                 return;
@@ -253,6 +273,7 @@ void XmlReader::ParseParams(bool paramsParsed)
             default :
                 anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
         }
+        elementCount++;
     }
 }
 
@@ -270,7 +291,8 @@ void XmlReader::ParseStream()
 int XmlReader::GetNextTag()
 {
     log_trace();
-    bool endTag = false;
+    bool endTagFound = false;
+    bool emptyTagFound = false;
 
     if (!tagSkipFirstChar_)
     {
@@ -288,7 +310,7 @@ int XmlReader::GetNextTag()
     if (is_.Peek() == '/')
     {
         is_.Get();
-        endTag = true;
+        endTagFound = true;
     }
     // build tag string
     int tagLength = 0;
@@ -304,12 +326,12 @@ int XmlReader::GetNextTag()
         }
         else if (tag[tagLength] == '/')
         {
-            if (endTag || (is_.Get() != '>'))
+            if (endTagFound || (is_.Get() != '>'))
             {
                 log_warn("GetNextTag: invalidTag, missing >");
                 anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
             }
-            endTag = true;
+            emptyTagFound = true;
             done = true;
         }
         else
@@ -337,8 +359,10 @@ int XmlReader::GetNextTag()
             (strncmp(tag,xmlTagList[entry].tagName,tagLength)) == 0)
         {
             int tagValue = xmlTagList[entry].tagValue;
-            if (endTag)
+            if (endTagFound)
                 tagValue+= 1;
+            else if (emptyTagFound)
+                tagValue+= 2;
             log_debug("GetNextTag: " << xmlTagList[entry].tagName << ", " << tagValue );
             return tagValue;
         }
@@ -350,33 +374,45 @@ int XmlReader::GetNextTag()
     return invalidTag;
 }
 
-void XmlReader::ParseValue(bool skipValueTag)
+void XmlReader::ParseValue(bool valueTagParsed)
 {
     log_trace();
-    int tag = GetNextTag();
-    if (!skipValueTag)
+    int tag;
+    if (!valueTagParsed)
     {
+        tag = GetNextTag();
+        if (tag == valueEmptyTag)
+        {
+            // same as <value></value> so an empty string
+            ParseEmptyString();
+            return;
+        }
         if (tag != valueTag)
             anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
-        tag = GetNextTag();
     }
+    tag = GetNextTag();
     switch (tag)
     {
-        case nilETag        : ParseNil();       break;
-        case booleanTag     : ParseBoolean();   break;
-        case intTag         : ParseNumber(tag); break;
-        case i4Tag          : ParseNumber(tag); break;
-        case i8Tag          : ParseNumber(tag); break;
-        case doubleTag      : ParseNumber(tag); break;
-        case stringTag      : ParseString(tag); break;
-        case emptyTag       : ParseString(tag); break;
-        case arrayTag       : ParseArray();     break;
-        case structTag      : ParseMap();       break;
-        case dateTimeTag    : ParseDateTime();  break;
-        case base64Tag      : ParseBase64();    break;
+        case nilEmptyTag    : ParseNil();         break;
+        case booleanTag     : ParseBoolean();     break;
+        case intTag         : ParseNumber(tag);   break;
+        case i4Tag          : ParseNumber(tag);   break;
+        case i8Tag          : ParseNumber(tag);   break;
+        case doubleTag      : ParseNumber(tag);   break;
+        case stringTag      : ParseString(tag);   break;
+        case stringEmptyTag : ParseEmptyString(); break;
+        case emptyTag       : ParseString(tag);   break;
+        case arrayTag       : ParseArray();       break;
+        case arrayEmptyTag  : ParseEmptyArray();  break;
+        case structTag      : ParseMap();         break;
+        case structEmptyTag : ParseEmptyMap();    break;
+        case dateTimeTag    : ParseDateTime();    break;
+        case base64Tag      : ParseBase64();      break;
+        case base64EmptyTag : ParseEmptyBase64(); break;
+        case valueEndTag    : ParseEmptyString(); break;
         default             : anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");;
     }
-    if (GetNextTag() != valueETag)
+    if ((tag != valueEndTag) && (GetNextTag() != valueEndTag))
         anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
 }
 
@@ -395,12 +431,12 @@ void XmlReader::ParseBoolean()
     switch (is_.Get())
     {
         case '0' :
-            if (GetNextTag() != booleanETag)
+            if (GetNextTag() != booleanEndTag)
                 anyrpc_throw(AnyRpcErrorTermination, "Parsing was terminated");
             handler_->BoolFalse();
             break;
         case '1' :
-            if (GetNextTag() != booleanETag)
+            if (GetNextTag() != booleanEndTag)
                 anyrpc_throw(AnyRpcErrorTermination, "Parsing was terminated");
             handler_->BoolTrue();
             break;
@@ -603,7 +639,7 @@ void XmlReader::ParseNumber(int tag)
         int p = exp + expFrac;
         d = internal::StrtodNormalPrecision(d, p);
 
-        if ((tag != doubleTag) || (GetNextTag() != doubleETag))
+        if ((tag != doubleTag) || (GetNextTag() != doubleEndTag))
             anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
         handler_->Double(minus ? -d : d);
     }
@@ -653,8 +689,17 @@ void XmlReader::ParseString(int tag)
         length = wsstream.Length();
         str = wsstream.GetBuffer();
     }
-    if ((tag == stringTag) && (GetNextTag() != stringETag))
+    if ((tag == stringTag) && (GetNextTag() != stringEndTag))
         anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
+
+    handler_->String(str,length,copy_);
+}
+
+void XmlReader::ParseEmptyString()
+{
+    log_trace();
+    const char* str = "";
+    size_t length = 0;
     handler_->String(str,length,copy_);
 }
 
@@ -686,7 +731,7 @@ void XmlReader::ParseKey()
         str = wsstream.GetBuffer();
     }
     log_info("ParseKey: length = " << length);
-    if (GetNextTag() != nameETag)
+    if (GetNextTag() != nameEndTag)
         anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
     handler_->Key(str,length,copy_);
 }
@@ -856,11 +901,11 @@ void XmlReader::ParseMap()
 
                 ParseKey();
                 ParseValue();
-                if (GetNextTag() != memberETag)
+                if (GetNextTag() != memberEndTag)
                     anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
                 break;
             }
-            case structETag :
+            case structEndTag :
             {
                 handler_->EndMap(memberCount);
                 return;
@@ -872,10 +917,27 @@ void XmlReader::ParseMap()
     }
 }
 
+void XmlReader::ParseEmptyMap()
+{
+    log_trace();
+    handler_->StartMap();
+    handler_->EndMap(0);
+}
+
 void XmlReader::ParseArray()
 {
     log_trace();
-    if (GetNextTag() != dataTag)
+    int nextTag = GetNextTag();
+    if (nextTag == dataEmptyTag)
+    {
+        // handle an empty data tag : <array><data/></array>
+        handler_->StartArray();
+        handler_->EndArray(0);
+        if (GetNextTag() != arrayEndTag)
+            anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
+        return;
+    }
+    if (nextTag != dataTag)
         anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
 
     handler_->StartArray();
@@ -891,10 +953,15 @@ void XmlReader::ParseArray()
                 ParseValue(true);
                 break;
             }
-            case dataETag :
+            case valueEmptyTag :
+            {
+                ParseEmptyString();  // same as <value><value/> so an empty string
+                break;
+            }
+            case dataEndTag :
             {
                 handler_->EndArray(elementCount);
-                if (GetNextTag() != arrayETag)
+                if (GetNextTag() != arrayEndTag)
                     anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
                 return;
             }
@@ -902,6 +969,14 @@ void XmlReader::ParseArray()
                 anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
         }
     }
+}
+
+void XmlReader::ParseEmptyArray()
+{
+    log_trace();
+    // handle an empty array tag : </array>
+    handler_->StartArray();
+    handler_->EndArray(0);
 }
 
 void XmlReader::ParseDateTime()
@@ -912,7 +987,7 @@ void XmlReader::ParseDateTime()
     size_t length = wsstream.Length();
     const char* str = wsstream.GetBuffer();
 
-    if (GetNextTag() != dateTimeETag)
+    if (GetNextTag() != dateTimeEndTag)
         anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
 
     // convert string to time
@@ -949,9 +1024,17 @@ void XmlReader::ParseBase64()
     }
     if (!decodeResult)
         anyrpc_throw(AnyRpcErrorBase64Invalid, "Error during base64 decode");
-    if (GetNextTag() != base64ETag)
+    if (GetNextTag() != base64EndTag)
         anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
+
     handler_->Binary( (const unsigned char*)str, length, copy_);
 }
 
+void XmlReader::ParseEmptyBase64()
+{
+    log_trace();
+    const char* str = "";
+    size_t length = 0;
+    handler_->Binary( (const unsigned char*)str, length, copy_);
+}
 }

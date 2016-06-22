@@ -26,7 +26,7 @@
 using namespace std;
 using namespace anyrpc;
 
-static string ReadWriteData(char* inString)
+static string ReadWriteData(const char* inString)
 {
     ReadStringStream is(inString);
     XmlReader reader(is);
@@ -36,6 +36,56 @@ static string ReadWriteData(char* inString)
     WriteStringStream os;
     XmlWriter writer(os);
     writer << doc.GetValue();
+
+    if (reader.GetParseErrorCode() != 0)
+        os.Put("<<<Parse Error>>>");
+
+    return os.GetString();
+}
+
+static string ParseParamsWriteData(const char* inString)
+{
+    ReadStringStream is(inString);
+    XmlReader reader(is);
+    Document doc;
+    reader.ParseParams(doc);
+
+    WriteStringStream os;
+    XmlWriter writer(os);
+    writer << doc.GetValue();
+
+    if (reader.GetParseErrorCode() != 0)
+        os.Put("<<<Parse Error>>>");
+
+    return os.GetString();
+}
+
+static string ParseMethodWriteData(const char* inString)
+{
+    ReadStringStream is(inString);
+    XmlReader reader(is);
+    Document doc;
+    string outString = reader.ParseMethod();
+    
+    if (reader.GetParseErrorCode() != 0)
+        outString += "<<<Parse Error>>>";
+
+    return outString;
+}
+
+static string ParseResponseWriteData(const char* inString)
+{
+    ReadStringStream is(inString);
+    XmlReader reader(is);
+    Document doc;
+    reader.ParseResponse(doc);
+
+    WriteStringStream os;
+    XmlWriter writer(os);
+    writer << doc.GetValue();
+
+    if (reader.GetParseErrorCode() != 0)
+        os.Put("<<<Parse Error>>>");
 
     return os.GetString();
 }
@@ -122,9 +172,17 @@ TEST(Xml,String)
     string outString = ReadWriteData(inString);
     EXPECT_STREQ( outString.c_str(), inString);
 
-    char inString2[] = "<value><string>Test string data</string></value>";
-    string outString2 = ReadWriteData(inString2);
-    EXPECT_STREQ( outString2.c_str(), inString);
+    outString = ReadWriteData("<value><string>Test string data</string></value>");
+    EXPECT_STREQ( outString.c_str(), inString);
+
+    outString = ReadWriteData("<value><string></string></value>");
+    EXPECT_STREQ( outString.c_str(), "<value></value>");
+
+    outString = ReadWriteData("<value></value>");
+    EXPECT_STREQ( outString.c_str(), "<value></value>");
+
+    outString = ReadWriteData("<value/>");
+    EXPECT_STREQ( outString.c_str(), "<value></value>");
 }
 
 TEST(Xml,Array)
@@ -137,6 +195,15 @@ TEST(Xml,Array)
                       "</data></array></value>";
     string outString = ReadWriteData(inString);
     EXPECT_STREQ( outString.c_str(), inString);
+
+    outString = ReadWriteData("<value><array/></value>");
+    EXPECT_STREQ( outString.c_str(), "<value><array><data></data></array></value>");
+
+    outString = ReadWriteData("<value><array><data/></array></value>");
+    EXPECT_STREQ( outString.c_str(), "<value><array><data></data></array></value>");
+
+    outString = ReadWriteData("<value><array><data><value/></data></array></value>");
+    EXPECT_STREQ( outString.c_str(), "<value><array><data><value></value></data></array></value>");
 }
 
 TEST(Xml,Map)
@@ -148,6 +215,9 @@ TEST(Xml,Map)
                       "</struct></value>";
     string outString = ReadWriteData(inString);
     EXPECT_STREQ( outString.c_str(), inString);
+
+    outString = ReadWriteData("<value><struct/></value>");
+    EXPECT_STREQ( outString.c_str(), "<value><struct></struct></value>");
 }
 
 TEST(Xml,DateTime)
@@ -172,6 +242,49 @@ TEST(Xml,Binary)
 
     EXPECT_TRUE(outValue.IsBinary());
     EXPECT_EQ( strncmp((char*)outValue.GetBinary(), (char*)value.GetBinary(), 8), 0);
+
+    string outString = ReadWriteData("<value><base64></base64></value>");
+    EXPECT_STREQ( outString.c_str(), "<value><base64></base64></value>");
+
+    outString = ReadWriteData("<value><base64/></value>");
+    EXPECT_STREQ( outString.c_str(), "<value><base64></base64></value>");
+}
+
+TEST(Xml,ParseParams)
+{
+    string outString = ParseParamsWriteData("<params/>");
+    EXPECT_STREQ( outString.c_str(), "<value><array><data></data></array></value>");
+
+    outString = ParseParamsWriteData("<params><param><value>param1</value></param></params>");
+    EXPECT_STREQ( outString.c_str(), "<value><array><data><value>param1</value></data></array></value>");
+}
+
+TEST(Xml,ParseMethod)
+{
+    string outString = ParseMethodWriteData("<methodName>myMethod</methodName>");
+    EXPECT_STREQ( outString.c_str(), "myMethod");
+}
+
+TEST(Xml,ParseResponse)
+{
+    const char inString[] = "<?xml version=\"1.0\"?>"
+                                "<methodResponse><params>"
+                                    "<param><value>myResult</value></param>"
+                                "</params></methodResponse>";
+    string outString = ParseResponseWriteData(inString);
+    EXPECT_STREQ( outString.c_str(), "<value><array><data><value>myResult</value></data></array></value>");
+
+    const char inString2[] = "<?xml version=\"1.0\"?>"
+                                "<methodResponse><fault><value><struct>"
+                                    "<member><name>faultCode</name><value><int>4</int></value></member>"
+                                    "<member><name>faultString</name><value>Too many parameters.</value></member>"
+                                "</struct></value></fault></methodResponse>";
+    outString = ParseResponseWriteData(inString2);
+    EXPECT_STREQ( outString.c_str(),
+            "<value><struct>"
+                "<member><name>faultCode</name><value><i4>4</i4></value></member>"
+                "<member><name>faultString</name><value>Too many parameters.</value></member>"
+            "</struct></value>");
 }
 
 TEST(Xml,ParseError1)

@@ -41,15 +41,16 @@ public:
     void ParseResponse(Handler& handler);
 
 private:
-    void ParseParams(bool paramsParsed=false);
+    void ParseParams(bool paramsTagParsed=false);
     void ParseStream();
     //! Get the next tag from the input stream and return as the XmlTagEnum value
     int GetNextTag();
-    void ParseValue(bool skipValueTag=false);
+    void ParseValue(bool valueTagParsed=false);
     void ParseNil();
     void ParseBoolean();
     void ParseNumber(int tag);
     void ParseString(int tag);
+    void ParseEmptyString();
     void ParseKey();
     //! Parse the input stream to an output stream as a string that needs decoded.
     void ParseStringToStream(Stream& os);
@@ -57,9 +58,12 @@ private:
     void ParseDecimalEscapeCode(Stream& os, const char* str, int length);
     void EncodeUtf8(Stream& os, unsigned codepoint);
     void ParseMap();
+    void ParseEmptyMap();
     void ParseArray();
+    void ParseEmptyArray();
     void ParseDateTime();
     void ParseBase64();
+    void ParseEmptyBase64();
 
     bool tagSkipFirstChar_;
 
