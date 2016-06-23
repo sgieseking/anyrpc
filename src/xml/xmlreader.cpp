@@ -319,6 +319,7 @@ int XmlReader::GetNextTag()
     while (!is_.Eof() && !done)
     {
         tag[tagLength] = is_.Get();
+        if (tag[tagLength] == ' ') continue;
         if (tag[tagLength] == '>')
         {
             tag[tagLength] = 0;
@@ -332,6 +333,7 @@ int XmlReader::GetNextTag()
                 anyrpc_throw(AnyRpcErrorTagInvalid, "Parse error with xml tag");
             }
             emptyTagFound = true;
+            tag[tagLength] = 0;
             done = true;
         }
         else
