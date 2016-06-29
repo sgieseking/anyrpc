@@ -104,8 +104,8 @@ bool MessagePackRpcHandler(MethodManager* manager, char* request, size_t length,
             // Should a notification produce a fault response if it is not formatted correctly?
 			// The protocol specification indicates no response should be given to a notification.
             Value& type = message[0];
-            Value& method = message[2];
-            Value& params = message[3];
+            Value& method = message[1];
+            Value& params = message[2];
 
             if (!type.IsInt() && (type.GetInt() != 1))
             {
