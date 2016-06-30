@@ -36,10 +36,7 @@ void Reader::SkipWhiteSpace()
         if (is_.Eof())
             return;
         char nextChar = is_.Peek();
-        if ((nextChar != ' ') &&
-            (nextChar != '\n') &&
-            (nextChar != '\r') &&
-            (nextChar != '\t'))
+        if (!IsWhiteSpace(nextChar))
             return;
         is_.Get();
     }

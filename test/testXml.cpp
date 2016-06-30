@@ -43,34 +43,22 @@ static string ReadWriteData(const char* inString)
     return os.GetString();
 }
 
-static string ParseParamsWriteData(const char* inString)
+static string ParseRequestWriteData(const char* inString)
 {
     ReadStringStream is(inString);
     XmlReader reader(is);
     Document doc;
-    reader.ParseParams(doc);
+    std::string methodName = reader.ParseRequest(doc);
 
     WriteStringStream os;
     XmlWriter writer(os);
+    writer.String(methodName.c_str(),methodName.length());
     writer << doc.GetValue();
 
     if (reader.GetParseErrorCode() != 0)
         os.Put("<<<Parse Error>>>");
 
     return os.GetString();
-}
-
-static string ParseMethodWriteData(const char* inString)
-{
-    ReadStringStream is(inString);
-    XmlReader reader(is);
-    Document doc;
-    string outString = reader.ParseMethod();
-    
-    if (reader.GetParseErrorCode() != 0)
-        outString += "<<<Parse Error>>>";
-
-    return outString;
 }
 
 static string ParseResponseWriteData(const char* inString)
@@ -114,11 +102,35 @@ static int CheckParseError(const char* inString)
     return reader.GetParseErrorCode();
 }
 
+TEST(Xml,Boolean)
+{
+    Value value, outValue;
+
+    value.SetBool(true);
+    WriteReadValue(value, outValue);
+    EXPECT_EQ(value.GetBool(), outValue.GetBool());
+
+    value.SetBool(false);
+    WriteReadValue(value, outValue);
+    EXPECT_EQ(value.GetBool(), outValue.GetBool());
+}
+
 TEST(Xml,Number)
 {
-    char inString[] = "<value><i4>5736298</i4></value>";
-    string outString = ReadWriteData(inString);
-    EXPECT_STREQ( outString.c_str(), inString);
+    Value value, outValue;
+
+    value.SetInt(5736298);
+    WriteReadValue(value, outValue);
+    EXPECT_EQ(value.GetInt(), outValue.GetInt());
+
+    value.SetInt(-2);
+    WriteReadValue(value, outValue);
+    EXPECT_EQ(value.GetInt(), outValue.GetInt());
+
+
+    value.SetInt64(9876543210LL);
+    WriteReadValue(value, outValue);
+    EXPECT_EQ(value.GetInt64(), outValue.GetInt64());
 }
 
 TEST(Xml,Double)
@@ -166,22 +178,39 @@ TEST(Xml,Double)
     EXPECT_DOUBLE_EQ(value.GetDouble(), outValue.GetDouble());
 }
 
-TEST(Xml,String)
+TEST(Xml,String1)
 {
-    char inString[] = "<value>Test string data</value>";
-    string outString = ReadWriteData(inString);
-    EXPECT_STREQ( outString.c_str(), inString);
-
-    outString = ReadWriteData("<value><string>Test string data</string></value>");
-    EXPECT_STREQ( outString.c_str(), inString);
-
-    outString = ReadWriteData("<value><string></string></value>");
+    string outString = ReadWriteData("<value>Test string data</value>");
+    EXPECT_STREQ( outString.c_str(), "<value>Test string data</value>");
+}
+TEST(Xml,String2)
+{
+    string outString = ReadWriteData("<value><string>Test string data</string></value>");
+    EXPECT_STREQ( outString.c_str(), "<value>Test string data</value>");
+}
+TEST(Xml,String3)
+{
+    string outString = ReadWriteData("<value><string> Test string data </string> \n\t </value>");
+    EXPECT_STREQ( outString.c_str(), "<value> Test string data </value>");
+}
+TEST(Xml,String4)
+{
+    string outString = ReadWriteData("<value> Test string data </value> ");
+    EXPECT_STREQ( outString.c_str(), "<value> Test string data </value>");
+}
+TEST(Xml,String5)
+{
+    string outString = ReadWriteData("<value><string></string></value>");
     EXPECT_STREQ( outString.c_str(), "<value></value>");
-
-    outString = ReadWriteData("<value></value>");
+}
+TEST(Xml,String6)
+{
+    string outString = ReadWriteData("<value></value>");
     EXPECT_STREQ( outString.c_str(), "<value></value>");
-
-    outString = ReadWriteData("<value/>");
+}
+TEST(Xml,String7)
+{
+    string outString = ReadWriteData("<value/>");
     EXPECT_STREQ( outString.c_str(), "<value></value>");
 }
 
@@ -250,35 +279,53 @@ TEST(Xml,Binary)
     EXPECT_STREQ( outString.c_str(), "<value><base64></base64></value>");
 }
 
-TEST(Xml,ParseParams)
+TEST(Xml,ParseRequest)
 {
-    string outString = ParseParamsWriteData("<params/>");
-    EXPECT_STREQ( outString.c_str(), "<value><array><data></data></array></value>");
+    string outString;
+    outString = ParseRequestWriteData("<?xml version=\"1.0\"?>"
+                                      "<methodCall>"
+                                          "<methodName>myMethod</methodName>"
+                                          "<params/>"
+                                      "</methodCall>");
+    EXPECT_STREQ( outString.c_str(), "<value>myMethod</value><value><array><data></data></array></value>");
 
-    outString = ParseParamsWriteData("<params><param><value>param1</value></param></params>");
-    EXPECT_STREQ( outString.c_str(), "<value><array><data><value>param1</value></data></array></value>");
-}
+    outString = ParseRequestWriteData("<?xml version=\"1.0\"?>"
+                                      "<!DOCTYPE methodCall>"
+                                      "<methodCall>"
+                                          "<methodName>myMethod</methodName>  "
+                                          "<params />"
+                                      "</methodCall>");
+    EXPECT_STREQ( outString.c_str(), "<value>myMethod</value><value><array><data></data></array></value>");
 
-TEST(Xml,ParseMethod)
-{
-    string outString = ParseMethodWriteData("<methodName>myMethod</methodName>");
-    EXPECT_STREQ( outString.c_str(), "myMethod");
+    outString = ParseRequestWriteData("<?xml version=\"1.0\"?>"
+                                      "<methodCall>"
+                                          "<methodName>myMethod</methodName>"
+                                      "</methodCall>");
+    EXPECT_STREQ( outString.c_str(), "<value>myMethod</value><value><array><data></data></array></value>");
+
+    outString = ParseRequestWriteData("<?xml version=\"1.0\"?>"
+                                      "<methodCall>"
+                                          "<methodName>myMethod</methodName>"
+                                          "<params><param><value>param1</value></param></params>"
+                                      "</methodCall>");
+    EXPECT_STREQ( outString.c_str(), "<value>myMethod</value><value><array><data><value>param1</value></data></array></value>");
 }
 
 TEST(Xml,ParseResponse)
 {
     const char inString[] = "<?xml version=\"1.0\"?>"
-                                "<methodResponse><params>"
-                                    "<param><value>myResult</value></param>"
-                                "</params></methodResponse>";
+                            "<methodResponse><params>"
+                                "<param><value>myResult</value></param>"
+                            "</params></methodResponse>";
     string outString = ParseResponseWriteData(inString);
     EXPECT_STREQ( outString.c_str(), "<value><array><data><value>myResult</value></data></array></value>");
 
     const char inString2[] = "<?xml version=\"1.0\"?>"
-                                "<methodResponse><fault><value><struct>"
-                                    "<member><name>faultCode</name><value><int>4</int></value></member>"
-                                    "<member><name>faultString</name><value>Too many parameters.</value></member>"
-                                "</struct></value></fault></methodResponse>";
+                             "<!DOCTYPE methodCall>"
+                             "<methodResponse><fault><value><struct>"
+                                 "<member><name>faultCode</name><value><int>4</int></value></member>"
+                                 "<member><name>faultString</name><value>Too many parameters.</value></member>"
+                             "</struct></value></fault></methodResponse>";
     outString = ParseResponseWriteData(inString2);
     EXPECT_STREQ( outString.c_str(),
             "<value><struct>"
@@ -287,21 +334,17 @@ TEST(Xml,ParseResponse)
             "</struct></value>");
 }
 
-TEST(Xml,ParseError1)
+TEST(Xml,ParseError)
 {
-    char inString[] = "<value>Test string data</string></value>";
+    const char *inString = "<value>Test string data</string></value>";
+    EXPECT_EQ(CheckParseError(inString), AnyRpcErrorTagInvalid);
+
+    inString = "<value><i4>5736298</value>";
+    EXPECT_EQ(CheckParseError(inString), AnyRpcErrorTagInvalid);
+
+    inString = "<value><i4>5736298<i4></value>";
+    EXPECT_EQ(CheckParseError(inString), AnyRpcErrorTagInvalid);
+
+    inString = "<value><i4>5736298</i4></ value>";
     EXPECT_EQ(CheckParseError(inString), AnyRpcErrorTagInvalid);
 }
-
-TEST(Xml,ParseError2)
-{
-    char inString[] = "<value><i4>5736298</value>";
-    EXPECT_EQ(CheckParseError(inString), AnyRpcErrorTagInvalid);
-}
-
-TEST(Xml,ParseError3)
-{
-    char inString[] = "<value><i4>5736298<i4></value>";
-    EXPECT_EQ(CheckParseError(inString), AnyRpcErrorTagInvalid);
-}
-

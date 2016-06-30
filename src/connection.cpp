@@ -500,7 +500,7 @@ bool TcpConnection::ReadHeader()
     bool eof;
     if (!socket_.Receive(buffer_+bufferLength_, MaxBufferLength-bufferLength_, bytesRead, eof))
     {
-        log_warn("Error while reading header: " << socket_.GetLastError() << ", bytesRead=" << bytesRead);
+        log_warn("Error while reading header: " << socket_.GetLastError() << ", bytesRead=" << bytesRead << ", eof=" << eof);
         Initialize();
         return false;
     }

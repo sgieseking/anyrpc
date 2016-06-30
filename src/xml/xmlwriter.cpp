@@ -131,7 +131,7 @@ void XmlWriter::String(const char* str, size_t length, bool copy)
     }
 
     os_.Put("<value>");
-    //os_.Put("<string>"); // optional
+    //os_.Put("<string>"); // optional but easier to handle whitespace in strings
     StringData(str, length);
     //os_.Put("</string>");
     os_.Put("</value>");

@@ -33,27 +33,27 @@ public:
 
     //! Parse the input stream to the handler
     virtual void ParseStream(Handler& handler);
-    //! Parse the input stream find the method name
-    std::string ParseMethod();
-    //! Parse the input stream for parameters
-    void ParseParams(Handler& handler);
+    //! Parse the input stream for method name and parameters
+    std::string ParseRequest(Handler& handler);
     //! Parse the input stream as a response
     void ParseResponse(Handler& handler);
 
 private:
-    void ParseParams(bool paramsTagParsed=false);
-    void ParseStream();
+    std::string ParseMethodName();
+    void ParseParams();
+    std::string TagToString(int tag);
     //! Get the next tag from the input stream and return as the XmlTagEnum value
-    int GetNextTag();
+    int GetNextTag(bool valueTagLast=false);
+    //! Parse the input stream for a value
     void ParseValue(bool valueTagParsed=false);
     void ParseNil();
     void ParseBoolean();
     void ParseNumber(int tag);
-    void ParseString(int tag);
+    int ParseString(int tag);
     void ParseEmptyString();
     void ParseKey();
     //! Parse the input stream to an output stream as a string that needs decoded.
-    void ParseStringToStream(Stream& os);
+    bool ParseStringToStream(Stream& os);
     void ParseHexEscapeCode(Stream& os, const char* str, int length);
     void ParseDecimalEscapeCode(Stream& os, const char* str, int length);
     void EncodeUtf8(Stream& os, unsigned codepoint);

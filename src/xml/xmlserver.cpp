@@ -50,55 +50,48 @@ bool XmlRpcHandler(MethodManager* manager, char* request, size_t length, Stream 
 {
     InSituStringStream sstream(request, length);
     XmlReader reader(sstream);
-    std::string methodName = reader.ParseMethod();
+    Document doc;
+
+    std::string methodName = reader.ParseRequest(doc);
     log_info("MethodName=" << methodName);
 
     if (reader.HasParseError())
         XmlGenerateFaultResponse(AnyRpcErrorParseError, "Parse error", response);
     else
     {
-        Document doc;
+        Value params;
+        Value result;
 
-        log_info("Parse params");
-        reader.ParseParams(doc);
-        if (reader.HasParseError())
-            XmlGenerateFaultResponse(AnyRpcErrorParseError, "Parse error", response);
-        else
+        params.Assign(doc.GetValue());
+        log_info("Execute method");
+        if (methodName == "system.multicall")
         {
-            Value params;
-            Value result;
-
-            params.Assign(doc.GetValue());
-            log_info("Execute method");
-            if (methodName == "system.multicall")
-            {
-                if (!params.IsArray() || (params.Size() != 1) || !params[0].IsArray())
-                    XmlGenerateFaultResponse(AnyRpcErrorInvalidParams, "Invalid method parameters", response);
-                else
-                {
-                    XmlExecuteMultiCall(manager,params[0],result);
-                    if (result.IsInvalid())
-                        result.SetString("");
-                    XmlGenerateResponse(result, response);
-               }
-            }
+            if (!params.IsArray() || (params.Size() != 1) || !params[0].IsArray())
+                XmlGenerateFaultResponse(AnyRpcErrorInvalidParams, "Invalid method parameters", response);
             else
             {
-                try
+                XmlExecuteMultiCall(manager,params[0],result);
+                if (result.IsInvalid())
+                    result.SetString("");
+                XmlGenerateResponse(result, response);
+           }
+        }
+        else
+        {
+            try
+            {
+                if (manager->ExecuteMethod(methodName,params,result))
                 {
-                    if (manager->ExecuteMethod(methodName,params,result))
-                    {
-                        if (result.IsInvalid())
-                            result = "";
-                        XmlGenerateResponse(result, response);
-                    }
-                    else
-                        XmlGenerateFaultResponse(AnyRpcErrorMethodNotFound, "Method not found", response);
+                    if (result.IsInvalid())
+                        result = "";
+                    XmlGenerateResponse(result, response);
                 }
-                catch (const AnyRpcException& fault)
-                {
-                    XmlGenerateFaultResponse(fault.GetCode(), fault.GetMessage(), response);
-                }
+                else
+                    XmlGenerateFaultResponse(AnyRpcErrorMethodNotFound, "Method not found", response);
+            }
+            catch (const AnyRpcException& fault)
+            {
+                XmlGenerateFaultResponse(fault.GetCode(), fault.GetMessage(), response);
             }
         }
     }
