@@ -41,6 +41,7 @@
 #include <time.h>
 #include <iterator>
 #include <cmath>
+#include <cctype>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Compiler Specific Includes

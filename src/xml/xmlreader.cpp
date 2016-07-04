@@ -29,8 +29,6 @@
 #include "anyrpc/internal/strtod.h"
 #include "anyrpc/internal/base64.h"
 
-#include <cctype>
-
 #define PARSE_ERROR_FOUND_EXPECTED(tag1,tag2)  "Parse error: found " << TagToString(tag1) << " expected " << TagToString(tag2)
 
 namespace anyrpc

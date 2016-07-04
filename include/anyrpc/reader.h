@@ -48,7 +48,7 @@ protected:
     //! Skip standard whitespace characters
     void SkipWhiteSpace();
 
-    virtual bool IsWhiteSpace(char c) { return std::isspace(c); }
+    virtual bool IsWhiteSpace(char c) { return (std::isspace(c) != 0); }
 
     static const int DefaultParseReserve = 50;      //!< Default space when expecting a short string
 
