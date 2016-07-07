@@ -237,13 +237,15 @@ void Connection::Process(bool executeAfterRead)
         }
         // When operating a thread pool, the main thread will read the request
         // but stop to transfer it to a worker thread for execution
-        if (executeAfterRead)
+        if (executeAfterRead && (connectionState_ == EXECUTE_REQUEST))
         {
-            if ((connectionState_ == EXECUTE_REQUEST) && (!ExecuteRequest()))
+            if (!ExecuteRequest())
             {
                 connectionState_ = CLOSE_CONNECTION;
                 break;
             }
+            // for a notification over tcp, there is no data sent back so check for more data to process
+            newMessage = (connectionState_ == READ_HEADER) && (bufferLength_ > 0);
         }
         // When operating a thread pool, the main thread might need to continue
         // to write a long response to the socket after the connection is returned
