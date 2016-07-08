@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
     int port = 9000;
     if (argc > 2)
         port = atoi(argv[2]);
-    server->BindAndListen(port);;
+    server->BindAndListen(port);
 
     // Determine the time that the server will run
     int timeout = 30;

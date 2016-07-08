@@ -364,7 +364,10 @@ bool HttpConnection::ReadHeader()
     bool eof;
     if (!socket_.Receive(buffer_+bufferLength_, MaxBufferLength-bufferLength_, bytesRead, eof))
     {
-        log_warn("error while reading header: " << socket_.GetLastError() << ", bytesRead=" << bytesRead);
+        if (eof)
+            log_info("Client disconnect: error=" << socket_.GetLastError());
+        else
+            log_warn("Error while reading header: error=" << socket_.GetLastError() << ", bytesRead=" << bytesRead);
         Initialize();
         return false;
     }
@@ -502,7 +505,10 @@ bool TcpConnection::ReadHeader()
     bool eof;
     if (!socket_.Receive(buffer_+bufferLength_, MaxBufferLength-bufferLength_, bytesRead, eof))
     {
-        log_warn("Error while reading header: " << socket_.GetLastError() << ", bytesRead=" << bytesRead << ", eof=" << eof);
+        if (eof)
+            log_info("Client disconnect: error=" << socket_.GetLastError());
+        else
+            log_warn("Error while reading header: error=" << socket_.GetLastError() << ", bytesRead=" << bytesRead);
         Initialize();
         return false;
     }
@@ -529,7 +535,7 @@ bool TcpConnection::ReadHeader()
         // EOF in the middle of a request is an error, otherwise its ok
         if (eof)
         {
-            log_warn("EOF while reading header");
+            log_warn("Client disconnect: error=" << socket_.GetLastError());
             Initialize();
             return false;
         }
