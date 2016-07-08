@@ -73,8 +73,22 @@ TEST(MessagePack,String)
     Value value;
     value.SetString("Test string data");
     Value outValue;
-    WriteReadValue(value, outValue);
 
+    WriteReadValue(value, outValue);
+    EXPECT_TRUE(outValue.IsString());
+    EXPECT_STREQ(outValue.GetString(), value.GetString());
+
+    value.SetString("0123456789012345678901234567890123456789012345678901234567890123456789"
+                    "0123456789012345678901234567890123456789012345678901234567890123456789");
+    WriteReadValue(value, outValue);
+    EXPECT_TRUE(outValue.IsString());
+    EXPECT_STREQ(outValue.GetString(), value.GetString());
+
+    value.SetString("0123456789012345678901234567890123456789012345678901234567890123456789"
+                    "0123456789012345678901234567890123456789012345678901234567890123456789"
+                    "0123456789012345678901234567890123456789012345678901234567890123456789"
+                    "0123456789012345678901234567890123456789012345678901234567890123456789");
+    WriteReadValue(value, outValue);
     EXPECT_TRUE(outValue.IsString());
     EXPECT_STREQ(outValue.GetString(), value.GetString());
 }

@@ -139,7 +139,7 @@ void MessagePackReader::ParseKey()
     {
         if (is_.Eof())
             anyrpc_throw(AnyRpcErrorTermination, "Parsing was terminated");
-        length = (unsigned char)is_.Get();
+        length = static_cast<unsigned char>(is_.Get());
     }
     else
         anyrpc_throw(AnyRpcErrorValueInvalid, "Invalid value");
@@ -329,7 +329,7 @@ void MessagePackReader::ParseFixStr()
 void MessagePackReader::ParseStr8()
 {
     log_trace();
-    ParseStr(is_.Get());
+    ParseStr( static_cast<unsigned char>(is_.Get()) );
 }
 
 void MessagePackReader::ParseStr16()
@@ -399,7 +399,7 @@ void MessagePackReader::ParseBin8()
     log_trace();
     if (is_.Eof())
         anyrpc_throw(AnyRpcErrorTermination, "Parsing was terminated");
-    ParseBin(is_.Get());
+    ParseBin( static_cast<unsigned char>(is_.Get()) );
 }
 
 void MessagePackReader::ParseBin16()
