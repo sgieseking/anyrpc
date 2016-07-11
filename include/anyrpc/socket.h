@@ -57,6 +57,8 @@ public:
 
     bool FatalError() { return FatalError(err_); }
     bool FatalError(int err);
+    bool ConnectionResetError() { return ConnectionResetError(err_); }
+    bool ConnectionResetError(int err);
     int GetLastError() { return err_; }
 
     bool WaitReadable(int timeout=-1);
