@@ -35,18 +35,18 @@ namespace anyrpc
 class ANYRPC_API MessagePackReader : public Reader
 {
 public:
-    MessagePackReader(Stream& is) : Reader(is), handler_(0), token_(0) {}
+    MessagePackReader(Stream& is) : Reader(is), handler_(0), token_(0), tokenValid_(false) {}
     virtual ~MessagePackReader() {}
 
     virtual void ParseStream(Handler& handler);
 
 private:
     //! Get the next token value which may have already been read
-    void GetToken() { if (token_ == 0) token_ = is_.Get(); }
+    void GetToken() { if (!tokenValid_) { token_ = is_.Get(); tokenValid_ = true;} }
     //! Get the next token and clear the value in the insitu stream (i.e. null terminate string)
-    void GetClearToken() { token_ = is_.GetClear(); }
+    void GetClearToken() { token_ = is_.GetClear(); tokenValid_ = true; }
     //! Clear the token to force a new read
-    void ResetToken() { token_ = 0; }
+    void ResetToken() { tokenValid_ = false; }
 
     void ParseStream();
     void ParseKey();
@@ -107,6 +107,7 @@ private:
 
     Handler* handler_;
     unsigned char token_;
+    bool tokenValid_;
 
     log_define("AnyRPC.MpacReader");
 };

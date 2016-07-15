@@ -42,6 +42,23 @@ static void WriteReadValue(Value& value, Value& outValue)
     EXPECT_FALSE(reader.HasParseError());
 }
 
+static void WriteReadValueInsitu(Value& value, Value& outValue, WriteStringStream& wstream)
+{
+    // Use file streams since binary data may contain embedded NULLs
+    MessagePackWriter writer(wstream);
+    writer << value;
+
+    const char* mPack = wstream.GetBuffer();
+    size_t mPacklength = wstream.Length();
+    InSituStringStream rstream((char*)mPack, mPacklength);
+    MessagePackReader reader(rstream);
+    Document doc;
+    reader >> doc;
+
+    outValue.Assign(doc.GetValue());
+    EXPECT_FALSE(reader.HasParseError());
+}
+
 TEST(MessagePack,Number)
 {
     Value value;
@@ -112,10 +129,13 @@ TEST(MessagePack,Map)
 {
     Value value;
     value["item1"] = 47;
-    value["item2"] = 63;
+    value["item2"] = 0;
     value["item3"] = 87.321;
     Value outValue;
-    WriteReadValue(value, outValue);
+
+    // the stream must be passed in so that the string is still valid with insitu parsing
+    WriteStringStream wstream;
+    WriteReadValueInsitu(value, outValue, wstream);
 
     EXPECT_TRUE(outValue.IsMap());
     EXPECT_EQ(outValue["item1"].GetInt(), value["item1"].GetInt());

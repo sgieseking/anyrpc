@@ -111,7 +111,7 @@ MessagePackReader::Function MessagePackReader::ParseLookup[256] = {
 void MessagePackReader::ParseStream()
 {
     log_trace();
-    if ((token_ == 0) && is_.Eof())
+    if (!tokenValid_ && is_.Eof())
         anyrpc_throw(AnyRpcErrorTermination, "Parsing was terminated");
     else
     {
