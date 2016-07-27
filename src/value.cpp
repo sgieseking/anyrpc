@@ -46,7 +46,7 @@ Value::Value() : data_(), flags_(0)
 {
 }
 
-Value::Value(const Value& rhs)
+Value::Value(const Value& rhs) : data_(), flags_(0)
 {
     CopyInternal(rhs);
 }
@@ -343,7 +343,7 @@ Value& Value::operator=(const char* s)
 Value& Value::operator=(const std::string& s)
 {
     this->~Value();
-    new (this) Value(s.c_str(),s.length(),true);
+    new (this) Value(s);
     return *this;
 }
 
