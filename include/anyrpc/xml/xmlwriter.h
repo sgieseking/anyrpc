@@ -42,8 +42,8 @@ public:
     //! Make the text more readable with indentation and linefeeds
     void SetPretty(bool pretty=true) { pretty_ = pretty; }
     //! Set the double format method. The default is no exponents for xmlrpc spec compatibility.
-    void SetScientificPrecision(unsigned precision=18)
-        { precision_ = std::min( 32u, precision_); }
+    void SetScientificPrecision(unsigned precision=32)
+        { precision_ = std::min( 32u, precision); }
 
     //!@name Miscellaneous Member Functions
     //@{

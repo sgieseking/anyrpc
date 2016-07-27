@@ -45,7 +45,7 @@ public:
         name_(name), help_(help), deleteOnRemove_(deleteOnRemove) {}
     virtual ~Method() {}
 
-    virtual void Execute(Value& params, Value& result) {}
+    virtual void Execute(Value&, Value&) {}
     std::string& Name() { return name_; }
     std::string& Help() { return help_; }
     bool DeleteOnRemove() { return deleteOnRemove_; }
