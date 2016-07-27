@@ -113,7 +113,7 @@ public:
 
     //!@name Assignment Operators
     //@{
-    Value& operator=(Value& rhs);
+    Value& operator=(const Value& rhs);
     Value& operator=(bool b);
     Value& operator=(int i);
     Value& operator=(unsigned u);

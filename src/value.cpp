@@ -276,7 +276,7 @@ Value::~Value()
     flags_ = InvalidFlag;
 }
 
-Value& Value::operator=(Value& rhs)
+Value& Value::operator=(const Value& rhs)
 {
     anyrpc_assert(this != &rhs, AnyRpcErrorIllegalAssignment, "Can't set equal to itself");
     this->~Value();
