@@ -444,7 +444,7 @@ bool HttpClient::GenerateHeader()
     header_ << "Host: " << host_ << ":" << port_ << "\r\n";
     header_ << "Content-Type: " << contentType_ << "\r\n";
     header_ << "Accept: " << contentType_ << "\r\n";
-    header_ << "Content-length: " << request_.Length() << "\r\n";
+    header_ << "Content-length: " << static_cast<uint64_t>(request_.Length()) << "\r\n";
     header_ << "\r\n";
 
     return true;
@@ -527,8 +527,8 @@ ProcessResponseEnum HttpClient::ProcessResponse(Value& result, bool notification
 bool TcpClient::GenerateHeader()
 {
     log_trace();
-    header_ << request_.Length() << ":";
-    log_debug("Request length=" << request_.Length());
+    header_ << static_cast<uint64_t>(request_.Length()) << ":";
+    log_debug("Request length=" << static_cast<uint64_t>(request_.Length()));
 
     // add the comma separator to the request buffer
     request_ << ',';

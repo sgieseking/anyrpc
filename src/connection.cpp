@@ -472,7 +472,7 @@ void HttpConnection::GeneratePOSTResponseHeader(std::size_t bodySize, std::strin
     else
         header_ << "Connection: close\r\n";
     header_ << "Content-Type: " << contentType << "\r\n";
-    header_ << "Content-length: " << bodySize << "\r\n";
+    header_ << "Content-length: " << static_cast<uint64_t>(bodySize) << "\r\n";
     header_ << "\r\n";
 }
 
@@ -613,7 +613,7 @@ bool TcpConnection::ExecuteRequest()
     {
         // generate the header and add comma separator for netstrings format
         log_debug("Response length=" << response_.Length());
-        header_ << response_.Length() << ":";
+        header_ << static_cast<uint64_t>(response_.Length()) << ":";
         response_.Put(',');
 
         connectionState_ = WRITE_RESPONSE;

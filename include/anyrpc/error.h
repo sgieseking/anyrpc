@@ -150,7 +150,7 @@ private:
             log_assert_message(condition,"Code: " << code << ", Message: " << message); \
             std::stringstream anyrpcAssertBuffer;                   \
             anyrpcAssertBuffer << message;                          \
-            throw AnyRpcException( code, anyrpcAssertBuffer.str() );\
+            throw anyrpc::AnyRpcException( code, anyrpcAssertBuffer.str() );\
         }                                                           \
     } while (0)
 
@@ -173,7 +173,7 @@ private:
         log_error("Throw exception, Code: " << code << ", Message: " << message);\
         std::stringstream anyrpcAssertBuffer;                           \
         anyrpcAssertBuffer << message;                                  \
-        throw AnyRpcException( code, anyrpcAssertBuffer.str() );        \
+        throw anyrpc::AnyRpcException( code, anyrpcAssertBuffer.str() );        \
     } while (0)
 
 #endif
