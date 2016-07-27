@@ -69,7 +69,7 @@ Socket::Socket()
 #if defined(WIN32)
     InitWinSock();
 #endif
-    fd_ = -1;
+    fd_ = static_cast<SOCKET>(-1);
     timeout_ = 0;
     err_ = 0;
 }
@@ -81,7 +81,7 @@ void Socket::Close()
 #else
     close(fd_);
 #endif // WIN32
-    fd_ = -1;
+    fd_ = static_cast<SOCKET>(-1);
 }
 
 int Socket::SetReuseAddress(int param)
