@@ -442,33 +442,37 @@ anyrpc::Stream& operator<<(anyrpc::Stream& os, const std::string& str)
 
 anyrpc::Stream& operator<<(anyrpc::Stream& os, int i)
 {
-    std::stringstream buffer;
-    buffer << i;
-    os.Put(buffer.str());
+    os.Put(std::to_string(i));
     return os;
 }
 
-anyrpc::Stream& operator<<(anyrpc::Stream& os, unsigned u)
+anyrpc::Stream& operator<<(anyrpc::Stream& os, unsigned int u)
 {
-    std::stringstream buffer;
-    buffer << u;
-    os.Put(buffer.str());
+    os.Put(std::to_string(u));
     return os;
 }
 
-anyrpc::Stream& operator<<(anyrpc::Stream& os, int64_t i64)
+anyrpc::Stream& operator<<(anyrpc::Stream& os, long int li)
 {
-    std::stringstream buffer;
-    buffer << i64;
-    os.Put(buffer.str());
+    os.Put(std::to_string(li));
     return os;
 }
 
-anyrpc::Stream& operator<<(anyrpc::Stream& os, uint64_t u64)
+anyrpc::Stream& operator<<(anyrpc::Stream& os, unsigned long int uli)
 {
-    std::stringstream buffer;
-    buffer << u64;
-    os.Put(buffer.str());
+    os.Put(std::to_string(uli));
+    return os;
+}
+
+anyrpc::Stream& operator<<(anyrpc::Stream& os, long long int lli)
+{
+    os.Put(std::to_string(lli));
+    return os;
+}
+
+anyrpc::Stream& operator<<(anyrpc::Stream& os, unsigned long long int ulli)
+{
+    os.Put(std::to_string(ulli));
     return os;
 }
 

@@ -4,7 +4,7 @@
 A multiprotocol remote procedure call system for C++
 
 ## Overview
-AnyRPC provides a common system to work with a number of different remote procedure call standards. 
+AnyRPC provides a common system to work with a number of different remote procedure call standards.
 This is handled transparently by the server.  
 
 Currently supported RPC standards include:
@@ -36,6 +36,7 @@ This conversion can be performed by both the server and the client.
 AnyRPC provides cross-platform support with primary targets for Linux, Visual Studio, and MinGW.  Some platform/compiler combinations which have been tested are shown as follows:
 
 * Ubuntu 14.04/gcc v4.8.4
+* Mac OS X 10.10 with Xcode 7.0
 * Windows 8 with Visual Studio 2015, 2013, 2012, 2010
 * Windows 8 with MinGW/gcc v4.8.1
 
@@ -82,7 +83,7 @@ If you are new to using CMake as a build tool, you may want to use cmake-gui ins
 |BUILD_WITH_WCHAR |Build the Value class with the functions for wchar_t/wstring access. |
 |BUILD_WITH_LOG4CPLUS |Build with the logging system available.  This requires [Log4cplus](https://github.com/log4cplus/log4cplus) to be installed. |
 |BUILD_WITH_THREADING |Build the threaded servers.  This requires a c++11 compiler with thread support.  MinGW thread libraries are provided from project [mingw-std-threads](https://github.com/meganz/mingw-std-threads).  |
-|BUILD_WITH_ADDRESS_SANATIZER |Build with address sanatizer enabled.  Only avaiable with gcc builds (Linux, MinGW).  Address sanatizer will detect certain heap access problems but slows the execution of the program. | 
+|BUILD_WITH_ADDRESS_SANATIZER |Build with address sanatizer enabled.  Only avaiable with gcc builds (Linux, MinGW).  Address sanatizer will detect certain heap access problems but slows the execution of the program. |
 
 ### Building on Linux
 
@@ -92,12 +93,12 @@ If you are new to using CMake as a build tool, you may want to use cmake-gui ins
 	$ cd build
 	$ cmake-gui ..
 	$ make
-	
+
 	The executables will be in the bin directory.
 	To use the AnyRPC library with your application, you will want to install the files to the standard Linux folders.
-	
+
 	$ sudo make install
-	
+
 ### Building on Windows with Visual Studio
 
 	$ git clone https://github.com/sgieseking/anyrpc.git
@@ -105,12 +106,12 @@ If you are new to using CMake as a build tool, you may want to use cmake-gui ins
 	$ mkdir build
 	$ cd build
 	$ cmake-gui ..
-	
+
 	Open the generated solution in Visual Studio.
 	Build the solution.
 	The executables will be in the bin/Release or bin/Debug directories.
 	To use the AnyRPC library with your application, they can be either included from these directories or copied to a local application directory.
-	
+
 ### Building on Windows in MinGW with MSys
 
 	$ git clone https://github.com/sgieseking/anyrpc.git
@@ -119,7 +120,7 @@ If you are new to using CMake as a build tool, you may want to use cmake-gui ins
 	$ cd build
 	$ cmake-gui ..
 	$ make
-	
+
 	The executables will be in the bin directory.
     To use the AnyRPC library with your application, they can be either included from these directories or copied to a local application directory.
 
@@ -138,7 +139,7 @@ A binary protocol should be more efficient for transport and processing for cust
 Json is easier for either manual testing or with certain platforms that may not be as open.
 Closed platforms may already support an existing protocol such as xmlrpc.
 Python has a built-in library for xmlrpc but requires external libraries for JsonRpc.
-	
+
 ## Inspiration
 
 The following projects influenced the development of AnyRPC.
@@ -162,7 +163,6 @@ The following projects are also of interest:
 ## Areas for Development
 
 * Support other message encoding formats: CBOR, BSON, UBJSON, Smile.
-* Support JsonRpc v1.0 for duplex connections. 
+* Support JsonRpc v1.0 for duplex connections.
 * User smart pointers (c++11 shared_ptr<>) to share strings and binary data between the application and the Value class.
 * Implement extensions from MessagePack as a Value type.
-

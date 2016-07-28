@@ -142,7 +142,7 @@ protected:
     //! Read back the RPC response header
     virtual bool ReadHeader(Value& result);
     //! Process the RPC response header, primarily to get the payload length
-    virtual int ProcessHeader(bool eof) { return HEADER_FAULT; }
+    virtual int ProcessHeader(bool /* eof */) { return HEADER_FAULT; }
     //! Read back the RPC response payload
     virtual bool ReadResponse(Value& result);
     //! Process the actual RPC response message

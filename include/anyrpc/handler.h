@@ -68,7 +68,7 @@ public:
     //!@name Map Processing Member Functions
     //@{
     virtual void StartMap() { anyrpc_throw(AnyRpcErrorIllegalCall,"Illegal call"); }
-    virtual void StartMap(std::size_t memberCount) { return StartMap(); }
+    virtual void StartMap(std::size_t /* memberCount */) { return StartMap(); }
     virtual void Key(const char* str, std::size_t length, bool copy = true) = 0;
     virtual void MapSeparator() {}
     virtual void EndMap(std::size_t memberCount = 0) = 0;
@@ -77,7 +77,7 @@ public:
     //!@name Array Processing Member Functions
     //@{
     virtual void StartArray() { anyrpc_throw(AnyRpcErrorIllegalCall,"Illegal call"); };
-    virtual void StartArray(std::size_t elementCount) { return StartArray(); }
+    virtual void StartArray(std::size_t /* elementCount */) { return StartArray(); }
     virtual void ArraySeparator() {}
     virtual void EndArray(std::size_t elementCount = 0) = 0;
     //@}

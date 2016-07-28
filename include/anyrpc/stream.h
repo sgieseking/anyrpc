@@ -50,20 +50,20 @@ public:
     //! Return the next character, set the data to 0, and move forward.  Sometimes used with InSitu processing.
     virtual char GetClear() { return Get(); }
     //! Read up to length characters.  Return the number of characters read.
-    virtual std::size_t Read(char* ptr, std::size_t length) { anyrpc_assert(false,AnyRpcErrorIllegalCall,"Illegal call"); return 0; }
+    virtual std::size_t Read(char* /* ptr */ , std::size_t /* length */) { anyrpc_assert(false,AnyRpcErrorIllegalCall,"Illegal call"); return 0; }
     //! Skip forward up to length characters.  Return the number of characters skipped.
-    virtual std::size_t Skip(std::size_t length) { anyrpc_assert(false,AnyRpcErrorIllegalCall,"Illegal call"); return 0; }
+    virtual std::size_t Skip(std::size_t /* length */) { anyrpc_assert(false,AnyRpcErrorIllegalCall,"Illegal call"); return 0; }
 
     //! Mark the current position as the destination.  Used with InSitu processing.
     virtual char* PutBegin() { anyrpc_assert(false,AnyRpcErrorIllegalCall,"Illegal call"); return 0; }
     //! Put a character in the stream
     virtual void Put(char) {}
     //! Put a string in the stream.  Must be null terminated.
-    virtual void Put(const char *str) {}
+    virtual void Put(const char * /* str */) {}
     //! Put a std:string in the stream.
-    virtual void Put(const std::string &str) {}
+    virtual void Put(const std::string & /* str */) {}
     //! Put a length of characters in the stream.
-    virtual void Put(const char *str, std::size_t n) {}
+    virtual void Put(const char * /* str */, std::size_t /* n */) {}
     //! Reset the mark for putting characters in the stream with InSitu processing.
     virtual std::size_t PutEnd() { anyrpc_assert(false,AnyRpcErrorIllegalCall,"Illegal call"); return 0; }
 
@@ -363,9 +363,11 @@ ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, char c);
 ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, const char* str);
 ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, const std::string& str);
 ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, int i);
-ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, unsigned u);
-ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, int64_t i64);
-ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, uint64_t u64);
+ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, unsigned int u);
+ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, long int u);
+ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, unsigned long int u);
+ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, long long int u);
+ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, unsigned long long int u);
 ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, double d);
 
 #endif // ANYRPC_STREAM_H_

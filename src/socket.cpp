@@ -69,7 +69,7 @@ Socket::Socket()
 #if defined(WIN32)
     InitWinSock();
 #endif
-    fd_ = -1;
+    fd_ = static_cast<SOCKET>(-1);
     timeout_ = 0;
     err_ = 0;
 }
@@ -81,7 +81,7 @@ void Socket::Close()
 #else
     close(fd_);
 #endif // WIN32
-    fd_ = -1;
+    fd_ = static_cast<SOCKET>(-1);
 }
 
 int Socket::SetReuseAddress(int param)
@@ -114,6 +114,13 @@ int Socket::SetKeepAliveInterval(int startTime, int interval, int probeCount)
     return result;
 #elif defined(__MINGW32__)
     // don't see how this can be performed right now
+#elif (__APPLE__)
+    int result = setsockopt( fd_, IPPROTO_TCP, TCP_KEEPALIVE, (char*)&startTime, sizeof(startTime) );
+    if (result < 0)
+    {
+        log_debug( "SetKeepAliveInterval: set keep idle result = " << result );
+    }
+    return result;
 #else
     int result = setsockopt( fd_, IPPROTO_TCP, TCP_KEEPIDLE, (char*)&startTime, sizeof(startTime) );
     if (result < 0)
@@ -280,7 +287,11 @@ bool TcpSocket::Send(const char* buffer, size_t length, size_t &bytesWritten, in
     gettimeofday( &startTime, 0 );
     while (true)
     {
-        int numBytes = send( fd_, buffer+bytesWritten, static_cast<int>(length-bytesWritten), MSG_NOSIGNAL );
+#ifdef MSG_NOSIGNAL
+        int numBytes = send( fd_, buffer+bytesWritten, static_cast<int>(length-bytesWritten),  MSG_NOSIGNAL);
+#else
+        int numBytes = send( fd_, buffer+bytesWritten, static_cast<int>(length-bytesWritten),  SO_NOSIGPIPE);
+#endif
         SetLastError();
         log_debug("Send: numBytes=" << numBytes << ", err=" << err_);
         if (numBytes < 0)
@@ -458,8 +469,14 @@ bool UdpSocket::Send(const char* buffer, std::size_t length, std::size_t &bytesW
     struct timeval startTime;
     gettimeofday( &startTime, 0 );
 
+#ifdef MSG_NOSIGNAL
     int numBytes = sendto( fd_, buffer+bytesWritten, static_cast<int>(length-bytesWritten), MSG_NOSIGNAL,
                             (struct sockaddr *)&sendAddr, sizeof(sendAddr) );
+#else
+    int numBytes = sendto( fd_, buffer+bytesWritten, static_cast<int>(length-bytesWritten), SO_NOSIGPIPE,
+                            (struct sockaddr *)&sendAddr, sizeof(sendAddr) );
+#endif
+
     SetLastError();
     log_debug("Send: numBytes=" << numBytes << ", err=" << err_);
     if (numBytes < 0)
