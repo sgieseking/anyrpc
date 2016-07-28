@@ -363,9 +363,11 @@ ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, char c);
 ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, const char* str);
 ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, const std::string& str);
 ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, int i);
-ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, unsigned u);
-ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, int64_t i64);
-ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, uint64_t u64);
+ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, unsigned int u);
+ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, long int u);
+ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, unsigned long int u);
+ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, long long int u);
+ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, unsigned long long int u);
 ANYRPC_API anyrpc::Stream& operator<<(anyrpc::Stream& os, double d);
 
 #endif // ANYRPC_STREAM_H_
