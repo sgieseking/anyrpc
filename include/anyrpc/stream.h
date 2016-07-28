@@ -50,20 +50,20 @@ public:
     //! Return the next character, set the data to 0, and move forward.  Sometimes used with InSitu processing.
     virtual char GetClear() { return Get(); }
     //! Read up to length characters.  Return the number of characters read.
-    virtual std::size_t Read(char* , std::size_t ) { anyrpc_assert(false,AnyRpcErrorIllegalCall,"Illegal call"); return 0; }
+    virtual std::size_t Read(char* /* ptr */ , std::size_t /* length */) { anyrpc_assert(false,AnyRpcErrorIllegalCall,"Illegal call"); return 0; }
     //! Skip forward up to length characters.  Return the number of characters skipped.
-    virtual std::size_t Skip(std::size_t ) { anyrpc_assert(false,AnyRpcErrorIllegalCall,"Illegal call"); return 0; }
+    virtual std::size_t Skip(std::size_t /* length */) { anyrpc_assert(false,AnyRpcErrorIllegalCall,"Illegal call"); return 0; }
 
     //! Mark the current position as the destination.  Used with InSitu processing.
     virtual char* PutBegin() { anyrpc_assert(false,AnyRpcErrorIllegalCall,"Illegal call"); return 0; }
     //! Put a character in the stream
     virtual void Put(char) {}
     //! Put a string in the stream.  Must be null terminated.
-    virtual void Put(const char *) {}
+    virtual void Put(const char * /* str */) {}
     //! Put a std:string in the stream.
-    virtual void Put(const std::string &) {}
+    virtual void Put(const std::string & /* str */) {}
     //! Put a length of characters in the stream.
-    virtual void Put(const char *, std::size_t ) {}
+    virtual void Put(const char * /* str */, std::size_t /* n */) {}
     //! Reset the mark for putting characters in the stream with InSitu processing.
     virtual std::size_t PutEnd() { anyrpc_assert(false,AnyRpcErrorIllegalCall,"Illegal call"); return 0; }
 
