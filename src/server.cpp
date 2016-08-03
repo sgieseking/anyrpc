@@ -522,7 +522,8 @@ void ServerTP::ThreadStarter()
     workerBlock_.notify_all();
     for (std::thread &worker: workers_)
         worker.join();
-
+	workers_.clear();
+	
     // shutdown the rest of the system
     Shutdown();
     threadRunning_ = false;
