@@ -16,10 +16,10 @@ HTTP servers can support multiple protocols based on the content-type field of t
 
 TCP servers use netstrings protocol for lower overhead connections but are limited to a single protocol.
 
-Threaded servers are available using optional compilation with c++11 thread support.
+Threaded servers are available using c++11 thread support.
 
 Available server types:
-* Without threading, call to run for a given amount of time.  Useful for your own threading (i.e. no c++11 thread support).
+* Without threading, call to run for a given amount of time.  Useful when using your own threading.
 * Single threaded server.  All message processing is serialized.
 * Multi-threaded server.  Separate thread for each client, but higher memory requirements.
 * Thread-pool server.  Single thread to wait for messages, but execution given to a set of worker threads.  Higher server overhead for each message, but limited number of threads to service a larger number of connections.
@@ -33,11 +33,11 @@ For example Json does not support binary data so this is converted to a two elem
 This conversion can be performed by both the server and the client.
 
 ## Compatibility
-AnyRPC provides cross-platform support with primary targets for Linux, Visual Studio, and MinGW.  Some platform/compiler combinations which have been tested are shown as follows:
+AnyRPC provides cross-platform support with primary targets for Linux, Visual Studio, and MinGW.  It does require a compiler with c++11 support.  Some platform/compiler combinations which have been tested are shown below:
 
 * Ubuntu 14.04/gcc v4.8.4
 * Mac OS X 10.10 with Xcode 7.0
-* Windows 8 with Visual Studio 2015, 2013, 2012, 2010
+* Windows 8/10 with Visual Studio 2015, 2013, 2012
 * Windows 8 with MinGW/gcc v4.8.1
 
 ## License
