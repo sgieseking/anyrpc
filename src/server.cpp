@@ -39,6 +39,10 @@
 # include <unistd.h>   // for close()
 #endif // WIN32
 
+#ifdef __CYGWIN__
+# include <sys/select.h>
+#endif
+
 namespace anyrpc
 {
 
