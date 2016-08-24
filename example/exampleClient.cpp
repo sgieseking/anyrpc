@@ -5,6 +5,10 @@
 #include <thread>
 #endif
 
+#ifdef __CYGWIN__
+# include <strings.h>
+#endif
+
 using namespace std;
 using namespace anyrpc;
 

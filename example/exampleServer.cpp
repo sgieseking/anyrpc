@@ -2,6 +2,10 @@
 #include "anyrpc/anyrpc.h"
 #include "anyrpc/internal/time.h"
 
+#ifdef __CYGWIN__
+# include <strings.h>
+#endif
+
 using namespace std;
 using namespace anyrpc;
 

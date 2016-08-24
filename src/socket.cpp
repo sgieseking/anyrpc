@@ -42,6 +42,13 @@ extern "C"
 }
 #endif  // _WIN32
 
+#ifdef __CYGWIN__
+# include <sys/select.h>
+# define TCP_KEEPIDLE 4
+# define TCP_KEEPINTVL 5
+# define TCP_KEEPCNT 6
+#endif
+
 namespace anyrpc
 {
 
