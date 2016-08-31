@@ -23,6 +23,10 @@
 
 #include "internal/http.h"
 
+#if defined(__CYGWIN__)
+# include <sys/time.h>
+#endif
+
 #if defined(ANYRPC_THREADING)
 # include <atomic>
 #endif  // defined(ANYRPC_THREADING)

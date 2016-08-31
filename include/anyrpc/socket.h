@@ -25,6 +25,12 @@
 typedef int SOCKET;     //!< SOCKET is used by Windows instead of int
 #endif  // _WIN32
 
+#if defined(__CYGWIN__)
+# include <sys/select.h>
+# include <netinet/in.h>
+# include <netinet/tcp.h>
+#endif
+
 namespace anyrpc
 {
 

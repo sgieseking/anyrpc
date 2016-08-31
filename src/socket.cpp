@@ -112,7 +112,7 @@ int Socket::SetKeepAliveInterval(int startTime, int interval, int probeCount)
     if (result < 0)
         log_debug( "SetKeepAliveInterval: result = " << result );
     return result;
-#elif defined(__MINGW32__)
+#elif defined(__MINGW32__) || defined(__CYGWIN__)
     // don't see how this can be performed right now
 #elif (__APPLE__)
     int result = setsockopt( fd_, IPPROTO_TCP, TCP_KEEPALIVE, (char*)&startTime, sizeof(startTime) );

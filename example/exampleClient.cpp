@@ -2,7 +2,11 @@
 #include "anyrpc/anyrpc.h"
 
 #if defined(ANYRPC_THREADING)
-#include <thread>
+# include <thread>
+#endif
+
+#if defined(__CYGWIN__)
+# include <strings.h>
 #endif
 
 using namespace std;

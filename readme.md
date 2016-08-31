@@ -39,6 +39,7 @@ AnyRPC provides cross-platform support with primary targets for Linux, Visual St
 * Mac OS X 10.10 with Xcode 7.0
 * Windows 8/10 with Visual Studio 2015, 2013, 2012
 * Windows 8 with MinGW/gcc v4.8.1
+* Windows 10 with Cygwin/gcc v5.4.0
 
 ## License
 AnyRPC is available under [The MIT license](http://opensource.org/licenses/MIT).  
