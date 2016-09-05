@@ -21,6 +21,12 @@
 #ifndef ANYRPC_LOGGER_H
 #define ANYRPC_LOGGER_H
 
+#ifdef __GNUC__
+#define ATTR_UNUSED  __attribute__ ((unused))
+#else
+#define ATTR_UNUSED
+#endif
+
 #if BUILD_WITH_LOG4CPLUS
 # include <log4cplus/log4cplus.h>
 # define InitializeLogger() \
@@ -40,7 +46,7 @@
 // Define the logger that will be used in the current namespace or class.
 #if defined(BUILD_WITH_LOG4CPLUS)
 # define log_define(category) \
-   static log4cplus::Logger _getStaticLogger()   \
+   ATTR_UNUSED static log4cplus::Logger _getStaticLogger()   \
    {  \
 	 static bool _staticLoggerDefined = false; \
      static log4cplus::Logger _staticLogger; \
