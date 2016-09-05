@@ -55,7 +55,7 @@ protected:
     std::string help_;
     bool deleteOnRemove_;
 
-    log_define("AnyRcp.Method");
+    log_define("AnyRpc.Method");
 };
 
 //! A MethodFunction is created with a function pointer that is call by the Execute method.
