@@ -145,6 +145,11 @@ public:
     //! Get the time when the last RPC transaction took place
     virtual time_t GetLastTransactionTime() { return lastTransactionTime_; }
 
+	//! Get ip and port of connection (local)
+	virtual bool GetSockInfo(std::string& ip, unsigned& port) const { return socket_.GetSockInfo(ip, port); }
+	//! Get ip and port of client (remote)
+	virtual bool GetPeerInfo(std::string& ip, unsigned& port) const { return socket_.GetPeerInfo(ip, port); }
+
 #if defined(ANYRPC_THREADING)
     void StartThread();
     void StopThread(bool waitForJoin=true);

@@ -258,6 +258,44 @@ bool Socket::WaitWritable(int timeout)
     return true;
 }
 
+bool Socket::GetSockInfo(std::string& ip, unsigned& port) const
+{
+	// get socket local ip and local port
+	sockaddr_in sa;
+	socklen_t len = sizeof(struct sockaddr_in);
+	if (getsockname(fd_, (struct sockaddr *) &sa, &len) != 0)
+	{
+		log_warn("Error while calling getsockname (code " << errno << "). Could not identify local ip and port of socket.");
+		return false;
+	}
+	// convert information
+	char ipStr[20];
+	inet_ntop(sa.sin_family, &sa.sin_addr, ipStr, sizeof(ipStr));
+	ip = ipStr;
+	port = ntohs(sa.sin_port);
+	log_debug("Socket information: " << ip << " on port " << port );
+	return true;
+}
+
+bool Socket::GetPeerInfo(std::string& ip, unsigned& port) const
+{
+	// get ip and port of connected peer
+	struct sockaddr_in sa;
+	socklen_t len = sizeof(struct sockaddr_in);
+	if (getpeername(fd_, (struct sockaddr *)&sa, &len) != 0)
+	{
+		log_warn("Error while calling getpeername (code " << errno << "). Could not identify ip and port of peer.");
+		return false;
+	}
+	// convert information
+	char ipStr[20];
+	inet_ntop(sa.sin_family, &sa.sin_addr, ipStr, sizeof(ipStr));
+	ip = ipStr;
+	port = ntohs(sa.sin_port);
+	log_debug("Peer information: " << ip << " on port " << port);
+	return true;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 SOCKET TcpSocket::Create()

@@ -89,7 +89,7 @@ bool Server::BindAndListen(int port, int backlog)
     if (result != 0)
     {
         socket_.Close();
-        log_warn("Could not bind to specified port : " << result);
+        log_warn("Could not bind to specified port " << port << " : " << result);
         return false;
     }
 
@@ -182,6 +182,30 @@ void Server::ThreadStarter()
     threadRunning_ = false;
 }
 #endif // defined(ANYRPC_THREADING)
+
+void Server::GetConnectionsSockInfo(std::list<std::string>& ips, std::list<unsigned>& ports) const
+{
+	std::string ip;
+	unsigned port;
+	for (auto& client : connections_)
+	{
+		client->GetSockInfo(ip, port);
+		ips.push_back(ip);
+		ports.push_back(port);
+	}
+}
+
+void Server::GetConnectionsPeerInfo(std::list<std::string>& ips, std::list<unsigned>& ports) const
+{
+	std::string ip;
+	unsigned port;
+	for (auto& client : connections_)
+	{
+		client->GetPeerInfo(ip, port);
+		ips.push_back(ip);
+		ports.push_back(port);
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -564,7 +588,7 @@ bool ServerTP::BindAndListen(int port, int backlog)
     if (result != 0)
     {
         serverSignal_.Close();
-        log_warn("Could not bind to specified port : " << result);
+        log_warn("Could not bind to specified port " << port << ": " << result);
         return false;
     }
 

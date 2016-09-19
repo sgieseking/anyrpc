@@ -184,7 +184,7 @@ public:
     Value& AddMember(const char* str, Value& value, bool copy=true) { return AddMember(str, strlen(str), value, copy); }
     //! Add member with string key and value.
     Value& AddMember(const std::string& str, Value& value) { return AddMember(str.c_str(), str.length(), value); }
-    //! Add member with key.  The key must be a String.  The value will be invalid until assigned.
+	//! Add member with key.  The key must be a String. The value will be invalid until assigned.
     Value& AddMember(Value& key, bool copy=true);
     //! Add member with string key.  The value will be invalid until assigned.
     Value& AddMember(const char* str, std::size_t length, bool copy=true);

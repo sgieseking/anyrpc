@@ -70,6 +70,11 @@ public:
     bool WaitReadable(int timeout=-1);
     bool WaitWritable(int timeout=-1);
 
+	//! Get information on ip and port of socket (local)
+	virtual bool GetSockInfo(std::string& ip, unsigned& port) const;
+	//! Get information on ip and port of peer (remote)
+	virtual bool GetPeerInfo(std::string& ip, unsigned& port) const;
+
 protected:
     void SetLastError();
 
