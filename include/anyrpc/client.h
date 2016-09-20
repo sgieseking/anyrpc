@@ -120,6 +120,13 @@ public:
     virtual bool GetPostResult(Value& result);
     virtual bool Notify(const char* method, Value& params, Value& result);
 
+    //! Start the client and connect to server
+    virtual bool Start();
+    //! Get ip and port of connection (local)
+    virtual bool GetSockInfo(std::string& ip, unsigned& port) const { return socket_.GetSockInfo(ip, port); }
+    //! Get ip and port of the host (remote)
+    virtual bool GetPeerInfo(std::string& ip, unsigned& port) const { return socket_.GetPeerInfo(ip, port); }
+
 protected:
     log_define("AnyRPC.Client");
 

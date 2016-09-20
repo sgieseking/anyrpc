@@ -93,6 +93,12 @@ public:
     void StopThread();
 #endif // defined(ANYRPC_THREADING)
 
+    //! Get ip and port of the server (local)
+    virtual bool GetMainSockInfo(std::string& ip, unsigned& port) const { return socket_.GetSockInfo(ip, port); }
+    //! Get ip and port of sockets of all connections (local)
+    virtual void GetConnectionsSockInfo(std::list<std::string>& ips, std::list<unsigned>& ports) const;
+    //! Get ip and port of peers of all connections (remote)
+    virtual void GetConnectionsPeerInfo(std::list<std::string>& ips, std::list<unsigned>& ports) const;
 
 protected:
     log_define("AnyRPC.Server");

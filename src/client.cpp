@@ -31,6 +31,12 @@
 #include "anyrpc/client.h"
 #include "anyrpc/internal/time.h"
 
+#ifndef WIN32
+#include <sys/socket.h>
+#include <netinet/ip.h>
+#include <arpa/inet.h>
+#endif  // _WIN32
+
 namespace anyrpc
 {
 
@@ -292,6 +298,20 @@ unsigned Client::GetTimeLeft()
 
     log_debug("GetTimeLeft: timeout=" << timeout_ << ", timeLeft=" << timeLeft << ", timeUsed=" << timeUsed);
     return timeLeft;
+}
+
+//! Start the client and connect to server
+bool Client::Start()
+{
+    Value result = Value(ValueType::InvalidType);
+    gettimeofday(&startTime_, 0);
+    if (!Connect(result))
+    {
+        Reset();
+        log_warn("Could not connect to server.");
+        return false;
+    }
+    return true;
 }
 
 bool Client::Connect(Value& result)
