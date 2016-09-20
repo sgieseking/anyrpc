@@ -303,15 +303,15 @@ unsigned Client::GetTimeLeft()
 //! Start the client and connect to server
 bool Client::Start()
 {
-	Value result = Value(ValueType::InvalidType);
-	gettimeofday(&startTime_, 0);
-	if (!Connect(result))
-	{
-		Reset();
-		log_warn("Could not connect to server.");
-		return false;
-	}
-	return true;
+    Value result = Value(ValueType::InvalidType);
+    gettimeofday(&startTime_, 0);
+    if (!Connect(result))
+    {
+        Reset();
+        log_warn("Could not connect to server.");
+        return false;
+    }
+    return true;
 }
 
 bool Client::Connect(Value& result)

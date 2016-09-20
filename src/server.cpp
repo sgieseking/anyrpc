@@ -157,8 +157,8 @@ void Server::Exit()
 void Server::StartThread()
 {
     log_trace();
-	threadRunning_ = true;
-	thread_ = std::thread(&Server::ThreadStarter, this);
+    threadRunning_ = true;
+    thread_ = std::thread(&Server::ThreadStarter, this);
 }
 
 void Server::StopThread()
@@ -173,7 +173,7 @@ void Server::StopThread()
 
 void Server::ThreadStarter()
 {
-	log_trace();
+    log_trace();
     while (threadRunning_ && !exit_)
     {
         Work(100);
@@ -185,26 +185,26 @@ void Server::ThreadStarter()
 
 void Server::GetConnectionsSockInfo(std::list<std::string>& ips, std::list<unsigned>& ports) const
 {
-	std::string ip;
-	unsigned port;
-	for (auto& client : connections_)
-	{
-		client->GetSockInfo(ip, port);
-		ips.push_back(ip);
-		ports.push_back(port);
-	}
+    std::string ip;
+    unsigned port;
+    for (auto& client : connections_)
+    {
+        client->GetSockInfo(ip, port);
+        ips.push_back(ip);
+        ports.push_back(port);
+    }
 }
 
 void Server::GetConnectionsPeerInfo(std::list<std::string>& ips, std::list<unsigned>& ports) const
 {
-	std::string ip;
-	unsigned port;
-	for (auto& client : connections_)
-	{
-		client->GetPeerInfo(ip, port);
-		ips.push_back(ip);
-		ports.push_back(port);
-	}
+    std::string ip;
+    unsigned port;
+    for (auto& client : connections_)
+    {
+        client->GetPeerInfo(ip, port);
+        ips.push_back(ip);
+        ports.push_back(port);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -546,8 +546,8 @@ void ServerTP::ThreadStarter()
     workerBlock_.notify_all();
     for (std::thread &worker: workers_)
         worker.join();
-	workers_.clear();
-	
+    workers_.clear();
+    
     // shutdown the rest of the system
     Shutdown();
     threadRunning_ = false;
