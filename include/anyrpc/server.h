@@ -79,7 +79,7 @@ public:
     //! Operate the server for a specified number of milliseconds
     virtual void Work(int ms) = 0;
     //! Close all of the connections
-    virtual void Shutdown() {}
+    virtual void Shutdown() { socket_.Close(); }
     //! Set the work loop to exit.  Also set the thread to exit if enabled.
     virtual void Exit();
     //! Get the method manager with the list of available methods

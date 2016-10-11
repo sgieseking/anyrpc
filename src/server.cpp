@@ -318,6 +318,7 @@ void ServerST::Shutdown()
         for (ConnectionList::iterator it = connections_.begin(); it != connections_.end(); ++it)
             delete *it;
         connections_.clear();
+        socket_.Close();
     }
 }
 
@@ -433,6 +434,7 @@ void ServerMT::Shutdown()
     }
 
     connections_.clear();
+    socket_.Close();
 }
 
 void ServerMT::AcceptConnection()
