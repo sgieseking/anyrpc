@@ -49,6 +49,7 @@ Server::Server()
     working_ = false;
     maxConnections_ = 8;
     port_ = 0;
+    forcedDisconnectAllowed_ = true;
 
 #if defined(ANYRPC_THREADING)
     threadRunning_ = false;
@@ -337,7 +338,7 @@ void ServerST::AcceptConnection()
         for (ConnectionList::iterator it = connections_.begin(); it != connections_.end(); ++it)
         {
             Connection* connection = *it;
-            if (connection->ForcedDisconnectAllowed())
+            if (forcedDisconnectAllowed_ && connection->ForcedDisconnectAllowed())
             {
                 time_t lastTime = connection->GetLastTransactionTime();
                 if ((targetTime == 0) || (lastTime < targetTime))
@@ -466,7 +467,7 @@ void ServerMT::AcceptConnection()
         for (ConnectionList::iterator it = connections_.begin(); it != connections_.end(); ++it)
         {
             Connection* connection = *it;
-            if (connection->ForcedDisconnectAllowed())
+            if (forcedDisconnectAllowed_ && connection->ForcedDisconnectAllowed())
             {
                 time_t lastTime = connection->GetLastTransactionTime();
                 if ((targetTime == 0) || (lastTime < targetTime))
