@@ -143,7 +143,7 @@ protected:
     //! Return the amount of time left for the call
     unsigned GetTimeLeft();
     //! Connect to the server
-    virtual bool Connect(Value& result);
+    virtual bool Connect();
     //! Generate the RPC request into the request_ stream based on the method and params
     virtual bool GenerateRequest(const char* method, Value& params, bool notification=false);
     //! Generate the protocol specific header for the RPC request

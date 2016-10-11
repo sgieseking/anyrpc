@@ -98,7 +98,7 @@ bool Client::Call(const char* method, Value& params, Value& result)
     PreserveReceiveBuffer();
     ResetTransaction();
 
-    if (Connect(result) &&
+    if (Connect() &&
         GenerateRequest(method, params) &&
         GenerateHeader())
     {
@@ -106,7 +106,7 @@ bool Client::Call(const char* method, Value& params, Value& result)
         {
             // retry the connection
             Close();
-            if (!Connect(result) ||
+            if (!Connect() ||
                 !WriteRequest(result))
             {
                 Reset();
@@ -138,7 +138,7 @@ bool Client::Post(const char* method, Value& params, Value& result)
     PreserveReceiveBuffer();
     ResetTransaction();
 
-    if (Connect(result) &&
+    if (Connect() &&
         GenerateRequest(method, params) &&
         GenerateHeader())
     {
@@ -146,7 +146,7 @@ bool Client::Post(const char* method, Value& params, Value& result)
         {
             // retry the connection
             Close();
-            if (!Connect(result) ||
+            if (!Connect() ||
                 !WriteRequest(result))
             {
                 Reset();
@@ -196,7 +196,7 @@ bool Client::Notify(const char* method, Value& params, Value& result)
     PreserveReceiveBuffer();
     ResetTransaction();
 
-    if (Connect(result) &&
+    if (Connect() &&
         GenerateRequest(method, params, true) &&
         GenerateHeader())
     {
@@ -204,7 +204,7 @@ bool Client::Notify(const char* method, Value& params, Value& result)
         {
             // retry the connection
             Close();
-            if (!Connect(result) ||
+            if (!Connect() ||
                 !WriteRequest(result))
             {
                 Reset();
@@ -305,7 +305,7 @@ bool Client::Start()
 {
     Value result = Value(ValueType::InvalidType);
     gettimeofday(&startTime_, 0);
-    if (!Connect(result))
+    if (!Connect())
     {
         Reset();
         log_warn("Could not connect to server.");
@@ -314,7 +314,7 @@ bool Client::Start()
     return true;
 }
 
-bool Client::Connect(Value& result)
+bool Client::Connect()
 {
     log_trace();
     if (socket_.IsConnected(0))
