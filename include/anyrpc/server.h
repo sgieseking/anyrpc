@@ -60,8 +60,9 @@ namespace anyrpc
  *
  *  There is a limit to the number of simultaneous connections.
  *  New connections will attempt to close an old connection with the assumption
- *  that the client will retry a failed attempt.  This prevents stale
- *  connections from consuming resources.
+ *  that the client will retry a failed attempt. This prevents stale
+ *  connections from consuming resources. Set forcedDisconnectAllowed_ to false
+ *  to disable this feature.
  */
 class ANYRPC_API Server
 {
@@ -71,12 +72,14 @@ public:
 
     //! Set the maximum number of simultaneous connections that the server can have
     void SetMaxConnections(unsigned maxConnections) { maxConnections_ = maxConnections; }
+    //! Enable or Disable the closing of old connections on connection of new clients
+    void SetForcedDisconnectAllowed(bool forcedDisconnectAllowed) { forcedDisconnectAllowed_ = forcedDisconnectAllowed; }
     //! Bind the server to a point and start listening for clients
     virtual bool BindAndListen(int port, int backlog = 5);
     //! Operate the server for a specified number of milliseconds
     virtual void Work(int ms) = 0;
     //! Close all of the connections
-    virtual void Shutdown() {}
+    virtual void Shutdown() { socket_.Close(); }
     //! Set the work loop to exit.  Also set the thread to exit if enabled.
     virtual void Exit();
     //! Get the method manager with the list of available methods
@@ -108,25 +111,26 @@ protected:
     //! Add all of the protocol handlers to the list
     virtual void AddAllHandlers();
 
-    TcpSocket socket_;          //!< Socket for communication
-    int port_;                  //!< Port used for socket
-    bool exit_;                 //!< Indication to exit the Work function or Thread
-    bool working_;              //!< Inside the work loop
-    unsigned maxConnections_;   //!< Maximum number of simultaneous active connections
+    TcpSocket socket_;             //!< Socket for communication
+    int port_;                     //!< Port used for socket
+    bool exit_;                    //!< Indication to exit the Work function or Thread
+    bool working_;                 //!< Inside the work loop
+    unsigned maxConnections_;      //!< Maximum number of simultaneous active connections
+    bool forcedDisconnectAllowed_; //!< Allow disconnecting of inactive clients to free slots for new ones
 
     typedef std::list<Connection*> ConnectionList;
-    ConnectionList connections_;//!< List of active connections
+    ConnectionList connections_;   //!< List of active connections
 
 #if defined(ANYRPC_THREADING)
     void ThreadStarter();
 
-    std::thread thread_;        //!< Thread information
-    bool threadRunning_;        //!< Indication that the thread should be running
+    std::thread thread_;           //!< Thread information
+    bool threadRunning_;           //!< Indication that the thread should be running
 #endif // defined(ANYRPC_THREADING)
 
 private:
-    MethodManager manager_;     //!< set of methods that can be called
-    RpcHandlerList handlers_;   //!< set of protocols supported - mostly for http servers
+    MethodManager manager_;        //!< set of methods that can be called
+    RpcHandlerList handlers_;      //!< set of protocols supported - mostly for http servers
 };
 
 ////////////////////////////////////////////////////////////////////////////////

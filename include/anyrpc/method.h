@@ -117,6 +117,7 @@ public:
 
     void AddFunction(Function* function, std::string const& name, std::string const& help);
     void AddMethod(Method* method);
+	bool RemoveMethod(std::string const& name);
     bool ExecuteMethod(std::string const& name, Value& params, Value& result);
     void ListMethods(Value& params, Value& result);
     void FindHelpMethod(Value& params, Value& result);

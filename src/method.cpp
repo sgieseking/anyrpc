@@ -94,6 +94,17 @@ void MethodManager::AddMethod(Method* method)
     }
 }
 
+bool MethodManager::RemoveMethod(std::string const& name)
+{
+	MethodMap::const_iterator it = methods_.find(name);
+	if (it == methods_.end())
+		return false; // no such method exists
+	if (it->second->DeleteOnRemove())
+		delete it->second;  // free the method pointer data
+	methods_.erase(it);
+	return true;
+}
+
 bool MethodManager::ExecuteMethod(std::string const& name, Value& params, Value& result)
 {
     MethodMap::const_iterator it = methods_.find(name);
