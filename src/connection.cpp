@@ -30,8 +30,6 @@
 #include "anyrpc/socket.h"
 #include "anyrpc/connection.h"
 #include "anyrpc/server.h"
-#include "anyrpc/xml/xmlwriter.h"
-#include "anyrpc/xml/xmlreader.h"
 #include "anyrpc/internal/time.h"
 
 namespace anyrpc

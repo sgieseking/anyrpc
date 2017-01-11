@@ -31,9 +31,16 @@
 #include "anyrpc/connection.h"
 #include "anyrpc/server.h"
 #include "anyrpc/internal/time.h"
-#include "anyrpc/json/jsonserver.h"
-#include "anyrpc/xml/xmlserver.h"
-#include "anyrpc/messagepack/messagepackserver.h"
+
+#if defined(ANYRPC_INCLUDE_JSON)
+# include "anyrpc/json/jsonserver.h"
+#endif
+#if defined(ANYRPC_INCLUDE_XML)
+# include "anyrpc/xml/xmlserver.h"
+#endif
+#if defined(ANYRPC_INCLUDE_MESSAGEPACK)
+# include "anyrpc/messagepack/messagepackserver.h"
+#endif
 
 #ifndef WIN32
 # include <unistd.h>   // for close()

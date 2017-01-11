@@ -107,8 +107,13 @@ else ()
     add_definitions( -DANYRPC_THROW=1 )
 endif ()
 
-find_package( Log4cplus )
-find_package( GTest )
+if (BUILD_WITH_LOG4CPLUS)
+    find_package( Log4cplus )
+endif ()
+
+if (BUILD_TESTS)
+    find_package( GTest )
+endif ()
 
 add_subdirectory(src)
 
