@@ -5,14 +5,14 @@ option(ANYRPC_LIB_BUILD_SHARED "Build anyrpc as a shared library." ON)
 
 # Set whether to build as shared or static library
 if (ANYRPC_LIB_BUILD_SHARED)
-	set( ANYRPC_LIB_TYPE SHARED )
+    set( ANYRPC_LIB_TYPE SHARED )
 
-	# On WIN32, a shared library require proper dllexport/dllimport declarations.
-	# With MinGW the default is to export all, but with Visual Studio the default is export none.
-	# The header files will do this correctly with the following defines
-	add_definitions( -DANYRPC_DLL_BUILD )
+    # On WIN32, a shared library require proper dllexport/dllimport declarations.
+    # With MinGW the default is to export all, but with Visual Studio the default is export none.
+    # The header files will do this correctly with the following defines
+    add_definitions( -DANYRPC_DLL_BUILD )
 else ()
-	set( ANYRPC_LIB_TYPE STATIC )
+    set( ANYRPC_LIB_TYPE STATIC )
 endif ()
 
 # Get all of the header and source files in the appropriate directories
@@ -44,10 +44,10 @@ set(ANYRPC_HEADERS ${ANYRPC_HEADERS} ${ANYRPC_INTERNAL_HEADERS}
 
 # Add the necessary external library references
 if (BUILD_WITH_LOG4CPLUS)
-	include_directories(${LOG4CPLUS_INCLUDE_DIRS})
-	add_definitions( -DBUILD_WITH_LOG4CPLUS )
+    include_directories(${LOG4CPLUS_INCLUDE_DIRS})
+    add_definitions( -DBUILD_WITH_LOG4CPLUS )
 else ()
-	set( LOG4CPLUS_LIBRARIES "" )
+    set( LOG4CPLUS_LIBRARIES "" )
 endif ()
 
 # Create the libraries with these header and source files
@@ -56,7 +56,7 @@ target_link_libraries( anyrpc ${ASAN_LIBRARY} ${LOG4CPLUS_LIBRARIES})
 
 # Need the winsock library for Windows
 if (WIN32)
-	target_link_libraries(anyrpc ws2_32)
+    target_link_libraries(anyrpc ws2_32)
 endif ()
 
 set_target_properties( anyrpc PROPERTIES VERSION ${ANYRPC_VERSION} SOVERSION ${ANYRPC_VERSION_MAJOR} )
@@ -71,13 +71,13 @@ install( TARGETS anyrpc
 set(ANYRPC_FILES ${ANYRPC_HEADERS} ${ANYRPC_CPP_SOURCES})
 
 foreach(FILE ${ANYRPC_FILES}) 
-	# get relative path without the file name
-	file(RELATIVE_PATH RFILE ${CMAKE_SOURCE_DIR} ${FILE})
-	get_filename_component(RFILE ${RFILE} PATH)
+    # get relative path without the file name
+    file(RELATIVE_PATH RFILE ${CMAKE_SOURCE_DIR} ${FILE})
+    get_filename_component(RFILE ${RFILE} PATH)
 
-	# changes /'s to \\'s
+    # changes /'s to \\'s
   	string(REPLACE "/" "\\" RFILE "${RFILE}")
 
-	# add to source group under Library Files
-	source_group("Library Files\\${RFILE}" FILES "${FILE}")
+    # add to source group under Library Files
+    source_group("Library Files\\${RFILE}" FILES "${FILE}")
 endforeach()
