@@ -42,18 +42,27 @@ class ANYRPC_API Method
 {
 public:
     Method(std::string const& name, std::string const& help, bool deleteOnRemove=true) :
-        name_(name), help_(help), deleteOnRemove_(deleteOnRemove) {}
+        name_(name), help_(help), deleteOnRemove_(deleteOnRemove), activeThreads_(0), delayedRemove_(false) {}
     virtual ~Method() {}
 
     virtual void Execute(Value& /* params */, Value& /* result */) {}
     std::string& Name() { return name_; }
     std::string& Help() { return help_; }
     bool DeleteOnRemove() { return deleteOnRemove_; }
+    bool DelayedRemove() { return delayedRemove_; }
+    void SetDelayedRemove() { delayedRemove_ = true; }
+    int ActiveThreads() { return activeThreads_; }
+    int AddThread() { return ++activeThreads_;  }
+    int RemoveThread() { return --activeThreads_; }
 
 protected:
     std::string name_;
     std::string help_;
     bool deleteOnRemove_;
+
+private:
+    int activeThreads_;
+    bool delayedRemove_;
 
     log_define("AnyRpc.Method");
 };
@@ -125,6 +134,7 @@ public:
 private:
     typedef std::map<std::string, Method*> MethodMap;   //!< definition of mapping function using the method name as the key
     MethodMap methods_;                                 //!< map of method names to method definitions
+    std::mutex mutex_;
 
     log_define("AnyRPC.MethodManager");
 };
