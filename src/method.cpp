@@ -128,24 +128,37 @@ bool MethodManager::ExecuteMethod(std::string const& name, Value& params, Value&
     method->AddThread();
     lock.unlock();
 
-    it->second->Execute(params,result);
+    try
+    {
+        it->second->Execute(params, result);
+    }
+    catch (...)
+    {
+        ExecuteMethod_FollowUpOperations(method);
+        throw; // rethrow exception
+    }
 
-    lock.lock();
+    ExecuteMethod_FollowUpOperations(method);
+
+    return true;
+}
+
+void MethodManager::ExecuteMethod_FollowUpOperations(Method *method)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
     // Finish with this thread using this method
     method->RemoveThread();
     // Check if we should remove the method - must have no active threads
     if (method->DelayedRemove() && (method->ActiveThreads() == 0))
     {
         // Find the method again in case other changes to the list have occurred
-        it = methods_.find(name);
+        MethodMap::const_iterator it = methods_.find(method->Name());
         if (it == methods_.end())
-            anyrpc_throw(AnyRpcErrorInternalError, "Method not found for delayed remove: " + name);
+            anyrpc_throw(AnyRpcErrorInternalError, "Method not found for delayed remove: " + method->Name());
         if (method->DeleteOnRemove())
             delete method;  // free the method pointer data
         methods_.erase(it);
     }
-
-    return true;
 }
 
 void MethodManager::ListMethods(Value& params, Value& result)
