@@ -96,9 +96,9 @@ void MethodManager::AddMethod(Method* method)
     }
 }
 
-bool MethodManager::RemoveMethod(std::string const& name)
+bool MethodManager::RemoveMethod(std::string const& name, bool WaitForDelayedRemove /* = false */)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::unique_lock<std::mutex> lock(mutex_);
     MethodMap::const_iterator it = methods_.find(name);
     if (it == methods_.end())
         return false; // no such method exists
@@ -107,6 +107,12 @@ bool MethodManager::RemoveMethod(std::string const& name)
     if (method->ActiveThreads() > 0)
     {
         method->SetDelayedRemove();
+        if (WaitForDelayedRemove)
+        {
+            // wait for method "name" being actually deleted
+            while (methods_.find(name) != methods_.end())
+                condVarDelayedRemove_.wait(lock);
+        }
     }
     else
     {
@@ -158,6 +164,7 @@ void MethodManager::ExecuteMethod_FollowUpOperations(Method *method)
         if (method->DeleteOnRemove())
             delete method;  // free the method pointer data
         methods_.erase(it);
+        condVarDelayedRemove_.notify_all(); // notify waiting calls of remove method (if any)
     }
 }
 
