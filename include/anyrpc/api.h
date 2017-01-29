@@ -42,6 +42,7 @@
 #include <iterator>
 #include <cmath>
 #include <cctype>
+#include <mutex>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Compiler Specific Includes

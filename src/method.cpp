@@ -62,6 +62,7 @@ MethodManager::~MethodManager()
 
 void MethodManager::AddFunction(Function* function, std::string const& name, std::string const& help)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     MethodMap::const_iterator it = methods_.find(name);
     if (it == methods_.end())
     {
@@ -78,6 +79,7 @@ void MethodManager::AddFunction(Function* function, std::string const& name, std
 
 void MethodManager::AddMethod(Method* method)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     MethodMap::const_iterator it = methods_.find(method->Name());
     if (it == methods_.end())
     {
@@ -94,30 +96,83 @@ void MethodManager::AddMethod(Method* method)
     }
 }
 
-bool MethodManager::RemoveMethod(std::string const& name)
+bool MethodManager::RemoveMethod(std::string const& name, bool WaitForDelayedRemove /* = false */)
 {
-	MethodMap::const_iterator it = methods_.find(name);
-	if (it == methods_.end())
-		return false; // no such method exists
-	if (it->second->DeleteOnRemove())
-		delete it->second;  // free the method pointer data
-	methods_.erase(it);
-	return true;
+    std::unique_lock<std::mutex> lock(mutex_);
+    MethodMap::const_iterator it = methods_.find(name);
+    if (it == methods_.end())
+        return false; // no such method exists
+
+    Method *method = it->second;
+    if (method->ActiveThreads() > 0)
+    {
+        method->SetDelayedRemove();
+        if (WaitForDelayedRemove)
+        {
+            // wait for method "name" being actually deleted
+            while (methods_.find(name) != methods_.end())
+                condVarDelayedRemove_.wait(lock);
+        }
+    }
+    else
+    {
+        if (method->DeleteOnRemove())
+            delete method;  // free the method pointer data
+        methods_.erase(it);
+    }
+    return true;
 }
 
 bool MethodManager::ExecuteMethod(std::string const& name, Value& params, Value& result)
 {
+    std::unique_lock<std::mutex> lock(mutex_);
     MethodMap::const_iterator it = methods_.find(name);
-    if (it == methods_.end())
+    if ((it == methods_.end()) || it->second->DelayedRemove())
         return false;
-    it->second->Execute(params,result);
+    // Add this thread to the list of users for this method
+    Method *method = it->second;
+    method->AddThread();
+    lock.unlock();
+
+    try
+    {
+        it->second->Execute(params, result);
+    }
+    catch (...)
+    {
+        ExecuteMethod_FollowUpOperations(method);
+        throw; // rethrow exception
+    }
+
+    ExecuteMethod_FollowUpOperations(method);
+
     return true;
+}
+
+void MethodManager::ExecuteMethod_FollowUpOperations(Method *method)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    // Finish with this thread using this method
+    method->RemoveThread();
+    // Check if we should remove the method - must have no active threads
+    if (method->DelayedRemove() && (method->ActiveThreads() == 0))
+    {
+        // Find the method again in case other changes to the list have occurred
+        MethodMap::const_iterator it = methods_.find(method->Name());
+        if (it == methods_.end())
+            anyrpc_throw(AnyRpcErrorInternalError, "Method not found for delayed remove: " + method->Name());
+        if (method->DeleteOnRemove())
+            delete method;  // free the method pointer data
+        methods_.erase(it);
+        condVarDelayedRemove_.notify_all(); // notify waiting calls of remove method (if any)
+    }
 }
 
 void MethodManager::ListMethods(Value& params, Value& result)
 {
     int i=0;
     result.SetArray();
+    std::lock_guard<std::mutex> lock(mutex_);
     result.SetSize(methods_.size());
     for (MethodMap::const_iterator it = methods_.begin(); it != methods_.end(); ++it)
         result[i++] = it->first;
@@ -128,6 +183,7 @@ void MethodManager::FindHelpMethod(Value& params, Value& result)
     if (!params.IsArray() || (params.Size() != 1) || !params[0].IsString())
         anyrpc_throw(AnyRpcErrorInvalidParams, "Invalid parameters");
 
+    std::lock_guard<std::mutex> lock(mutex_);
     MethodMap::const_iterator it = methods_.find(params[0].GetString());
     if (it == methods_.end())
         anyrpc_throw(AnyRpcErrorMethodNotFound, "Unknown method name: " + std::string(params[0].GetString()));
