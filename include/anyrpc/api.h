@@ -43,6 +43,7 @@
 #include <cmath>
 #include <cctype>
 #include <mutex>
+#include <condition_variable>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Compiler Specific Includes
