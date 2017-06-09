@@ -88,7 +88,7 @@ void MethodManager::AddMethod(Method* method)
     }
     else
     {
-		std::string nameStr = method->Name();
+        std::string nameStr = method->Name();
         // method already defined, clean up then throw exception
         // the user can catch and ignore the exception if this behavior is desired
         if (method->DeleteOnRemove())
