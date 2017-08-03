@@ -15,7 +15,7 @@ using namespace anyrpc;
  *  command line parser in not needed.
  *
  *  Param 1 : server type - defaults to jsonhttp
- *  Param 2 : Port for the server - defaults to 6000
+ *  Param 2 : Port for the server - defaults to 9000
  *  Param 3 : Number of seconds to wait until exiting
  *
  *  When testing with multiple clients, you should start the server with

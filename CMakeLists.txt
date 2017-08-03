@@ -19,10 +19,6 @@ set(ANYRPC_VERSION ${ANYRPC_VERSION_MAJOR}.${ANYRPC_VERSION_MINOR}.${ANYRPC_VERS
 message(STATUS "AnyRPC Version: ${ANYRPC_VERSION_MAJOR}.${ANYRPC_VERSION_MINOR}.${ANYRPC_VERSION_PATCH} (${ANYRPC_VERSION_QUALIFIER})")
 set(ANYRPC_VERSION_STRING "${ANYRPC_VERSION_MAJOR}.${ANYRPC_VERSION_MINOR}.${ANYRPC_VERSION_PATCH} (${ANYRPC_VERSION_QUALIFIER})" )
 
-# File version.h is only regenerated on CMake configure step
-CONFIGURE_FILE( "${PROJECT_SOURCE_DIR}/version.h.in"
-                "${PROJECT_SOURCE_DIR}/include/anyrpc/version.h" )
-
 # compile in release with debug info mode by default
 set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Build Type")
 
@@ -54,17 +50,13 @@ set(LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib" CACHE STRING "Directory where 
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-if (BUILD_PROTOCOL_JSON)
-    add_definitions( -DANYRPC_INCLUDE_JSON )
-endif ()
+set(ANYRPC_INCLUDE_JSON ${BUILD_PROTOCOL_JSON})
+set(ANYRPC_INCLUDE_XML ${BUILD_PROTOCOL_XML})
+set(ANYRPC_INCLUDE_MESSAGEPACK ${BUILD_PROTOCOL_MESSAGEPACK})
 
-if (BUILD_PROTOCOL_XML)
-    add_definitions( -DANYRPC_INCLUDE_XML )
-endif ()
-
-if (BUILD_PROTOCOL_MESSAGEPACK)
-    add_definitions( -DANYRPC_INCLUDE_MESSAGEPACK )
-endif ()
+set(ANYRPC_THREADING ${BUILD_WITH_THREADING})
+set(ANYRPC_REGEX ${BUILD_WITH_REGEX})
+set(ANYRPC_WCHAR ${BUILD_WITH_WCHAR})
 
 if (MSVC)
     add_definitions( -D _CRT_SECURE_NO_WARNINGS )
@@ -83,29 +75,23 @@ if (NOT MSVC)
     SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11" )
 endif ()
 
-if (BUILD_WITH_THREADING)
-    add_definitions( -DANYRPC_THREADING )
-endif ()
-
-if (BUILD_WITH_REGEX)
-    add_definitions( -DANYRPC_REGEX )
-endif ()
-
-if (BUILD_WITH_WCHAR)
-    add_definitions( -DANYRPC_WCHAR )
-endif ()
-
 if (ANYRPC_ASSERT STREQUAL "assert")
-    add_definitions( -DANYRPC_ASSERT=2 )
+    set(ANYRPC_ASSERT_LEVEL 2)
 elseif (ANYRPC_ASSERT STREQUAL "throw")
-    add_definitions( -DANYRPC_ASSERT=1 )
+    set(ANYRPC_ASSERT_LEVEL 1)
+else ()
+    set(ANYRPC_ASSERT_LEVEL 0)
 endif ()
 
 if (ANYRPC_THROW STREQUAL "assert")
-    add_definitions( -DANYRPC_THROW=2 )
+    set(ANYRPC_THROW_LEVEL 2)
 else ()
-    add_definitions( -DANYRPC_THROW=1 )
+    set(ANYRPC_THROW_LEVEL 1)
 endif ()
+
+# File version.h is only regenerated on CMake configure step
+CONFIGURE_FILE( "${PROJECT_SOURCE_DIR}/version.h.in"
+                "${PROJECT_SOURCE_DIR}/include/anyrpc/version.h" )
 
 if (BUILD_WITH_LOG4CPLUS)
     find_package( Log4cplus )
