@@ -24,6 +24,8 @@
 
 using namespace anyrpc;
 
+log_define("AnyRPC.Test");
+
 TEST(Value, Constructors)
 {
     Value valueInvalid;
@@ -87,7 +89,25 @@ TEST(Value, Map)
     EXPECT_EQ(iter, value.MemberEnd());
 }
 
-TEST(Value, Copy)
+TEST(Value, MapCopy)
+{
+    Value value;
+    value["one"] = 1;
+    value["two"] = 2;
+
+    Value value2;
+    // perform copy - value will still be a map
+    value2 = value;
+    EXPECT_TRUE(value.IsMap());
+    EXPECT_TRUE(value2.IsMap());
+
+    // perform assignment again - checking for proper destructor operation
+    value2 = value;
+    EXPECT_TRUE(value.IsMap());
+    EXPECT_TRUE(value2.IsMap());
+}
+
+TEST(Value, Assign)
 {
     Value value;
     Value value2(5);
@@ -98,7 +118,7 @@ TEST(Value, Copy)
     EXPECT_EQ(value.GetInt(), 5);
 }
 
-TEST(Value, Assign)
+TEST(Value, Copy)
 {
     Value value;
     Value value2(10);

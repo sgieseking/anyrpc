@@ -510,6 +510,9 @@ private:
     //! Internal member function to perform the recursive calls to perform a deep copy.
     void CopyInternal(const Value& rhs);
 
+    //! Delete any data and set to invalid
+    void Destroy();
+
     Data data_;             //!< Data storage which depends on the flags
     unsigned flags_;        //!< Flags that indicate the type information for accessing the data
 };  // 16 bytes in 32-bit mode, 24 bytes in 64-bit mode

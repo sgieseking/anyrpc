@@ -48,6 +48,7 @@ Value::Value() : data_(), flags_(0)
 
 Value::Value(const Value& rhs) : data_(), flags_(0)
 {
+    log_debug("Copy Constructor");
     CopyInternal(rhs);
 }
 
@@ -248,6 +249,11 @@ Value::Value(const std::wstring& ws)
 #endif
 Value::~Value()
 {
+    Destroy();
+}
+
+void Value::Destroy()
+{
     if (IsValid())
     {
         if ((flags_ == CopyStringFlag) || (flags_ == CopyBinaryFlag))
@@ -273,76 +279,78 @@ Value::~Value()
             free(data_.m.members);
         }
     }
+
     flags_ = InvalidFlag;
 }
 
 Value& Value::operator=(const Value& rhs)
 {
+    log_debug("Copy Value");
     anyrpc_assert(this != &rhs, AnyRpcErrorIllegalAssignment, "Can't set equal to itself");
-    this->~Value();
+    Destroy();
     CopyInternal(rhs);
     return *this;
 }
 
 Value& Value::operator=(bool b)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(b);
     return *this;
 }
 
 Value& Value::operator=(int i)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(i);
     return *this;
 }
 
 Value& Value::operator=(unsigned u)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(u);
     return *this;
 }
 
 Value& Value::operator=(int64_t i64)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(i64);
     return *this;
 }
 
 Value& Value::operator=(uint64_t u64)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(u64);
     return *this;
 }
 
 Value& Value::operator=(float f)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(f);
     return *this;
 }
 
 Value& Value::operator=(double d)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(d);
     return *this;
 }
 
 Value& Value::operator=(const char* s)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(s,true);
     return *this;
 }
 
 Value& Value::operator=(const std::string& s)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(s);
     return *this;
 }
@@ -350,14 +358,14 @@ Value& Value::operator=(const std::string& s)
 #if defined(ANYRPC_WCHAR)
 Value& Value::operator=(const wchar_t* ws)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(ws);
     return *this;
 }
 
 Value& Value::operator=(const std::wstring& ws)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(ws.c_str(),ws.length());
     return *this;
 }
@@ -365,7 +373,8 @@ Value& Value::operator=(const std::wstring& ws)
 
 Value& Value::SetInvalid()
 {
-    this->~Value();
+    log_debug("SetInvalid");
+    Destroy();
     flags_ = InvalidFlag;
     return *this;
 }
@@ -373,7 +382,7 @@ Value& Value::SetInvalid()
 Value& Value::SetNull()
 {
     log_debug("SetNull");
-    this->~Value();
+    Destroy();
     flags_ = NullFlag;
     return *this;
 }
@@ -381,7 +390,7 @@ Value& Value::SetNull()
 Value& Value::SetBool(bool b)
 {
     log_debug("SetBool: " << b);
-    this->~Value();
+    Destroy();
     flags_ = (b ? TrueFlag : FalseFlag);
     return *this;
 }
@@ -389,7 +398,7 @@ Value& Value::SetBool(bool b)
 Value& Value::SetMap()
 {
     log_debug("SetMap");
-    this->~Value();
+    Destroy();
     new (this) Value(MapType);
     return *this;
 }
@@ -592,7 +601,7 @@ Value& Value::operator[](const wchar_t* ws)
 Value& Value::SetArray()
 {
     log_debug("SetArray");
-    this->~Value();
+    Destroy();
     new (this) Value(ArrayType);
     return *this;
 }
@@ -600,7 +609,7 @@ Value& Value::SetArray()
 Value& Value::SetArray(std::size_t capacity)
 {
     log_debug("SetArray: capacity=" << capacity);
-    this->~Value();
+    Destroy();
     new (this) Value(ArrayType);
 
     anyrpc_assert(capacity < MaxArrayCapacity, AnyRpcErrorMemoryAllocation, "Too many elements, size=" << capacity << ", capacity=" << MaxArrayCapacity);
@@ -720,42 +729,42 @@ double Value::GetDouble() const
 
 Value& Value::SetInt(int i)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(i);
     return *this;
 }
 
 Value& Value::SetUint(unsigned u)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(u);
     return *this;
 }
 
 Value& Value::SetInt64(int64_t i64)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(i64);
     return *this;
 }
 
 Value& Value::SetUint64(uint64_t u64)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(u64);
     return *this;
 }
 
 Value& Value::SetFloat(float f)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(f);
     return *this;
 }
 
 Value& Value::SetDouble(double d)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(d);
     return *this;
 }
@@ -763,7 +772,7 @@ Value& Value::SetDouble(double d)
 Value& Value::SetDateTime(time_t dt)
 {
     log_debug("SetDateTime: " << dt);
-    this->~Value();
+    Destroy();
     flags_ = DateTimeType;
     data_.dt = dt;
     return *this;
@@ -783,14 +792,14 @@ std::size_t Value::GetStringLength() const
 
 Value& Value::SetString(const char* s, bool copy)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(s, copy);
     return *this;
 }
 
 Value& Value::SetString(const char* s, std::size_t length, bool copy)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(s, length, copy);
     return *this;
 }
@@ -813,14 +822,14 @@ void Value::GetWString(std::wstring& ws) const
 
 Value& Value::SetString(const wchar_t* ws)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(ws);
     return *this;
 }
 
 Value& Value::SetString(const wchar_t* ws, std::size_t length)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(ws, length);
     return *this;
 }
@@ -840,7 +849,7 @@ std::size_t Value::GetBinaryLength() const
 
 Value& Value::SetBinary(const unsigned char* s, size_t length, bool copy)
 {
-    this->~Value();
+    Destroy();
     new (this) Value(s, length, copy);
     return *this;
 }
@@ -1138,7 +1147,7 @@ void Value::Assign(Value& value)
 {
     if (this != &value)
     {
-        this->~Value();
+        Destroy();
         RawAssign(value);
     }
 }
