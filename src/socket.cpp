@@ -172,9 +172,9 @@ int Socket::Bind( int port )
 bool Socket::FatalError(int err)
 {
 #ifdef WIN32
-    return (err != WSAEINPROGRESS) && (err != EAGAIN) && (err != WSAEWOULDBLOCK) && (err != EINTR);
+    return (err != 0) && (err != WSAEINPROGRESS) && (err != EAGAIN) && (err != WSAEWOULDBLOCK) && (err != EINTR);
 #else
-    return (err != EINPROGRESS) && (err != EAGAIN) && (err != EWOULDBLOCK) && (err != EINTR);
+    return (err != 0) && (err != EINPROGRESS) && (err != EAGAIN) && (err != EWOULDBLOCK) && (err != EINTR);
 #endif
 }
 
