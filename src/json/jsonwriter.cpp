@@ -76,8 +76,12 @@ void JsonWriter::Uint64(uint64_t u64)
 void JsonWriter::Double(double d)
 {
     log_debug("Double: " << d);
-    char buffer[25];
-    int length = snprintf(buffer, sizeof(buffer), "%g", d);
+    char buffer[100];
+    int length;
+    if (precision_ > 0)
+        length = snprintf(buffer, sizeof(buffer), "%.*g", precision_, d);
+    else
+        length = snprintf(buffer, sizeof(buffer), "%g", d);
     os_.Put( buffer, length );
 }
 
@@ -242,7 +246,10 @@ void JsonWriter::Binary(const unsigned char* str, size_t length, bool copy)
 void JsonWriter::StartMap()
 {
     log_debug("StartMap");
+    NewLine();
     os_.Put('{');
+    IncLevel();
+    NewLine();
 }
 
 void JsonWriter::Key(const char* str, size_t length, bool copy)
@@ -256,33 +263,74 @@ void JsonWriter::MapSeparator()
 {
     log_debug("MapSeparator");
     os_.Put(',');
+    NewLine();
 }
 
 void JsonWriter::EndMap(size_t memberCount)
 {
     log_debug("EndMap: count=" << memberCount);
+    DecLevel();
+    NewLine();
     os_.Put('}');
     os_.Flush();
 }
 
-void JsonWriter::StartArray()
+void JsonWriter::StartArray(size_t elementCount)
 {
     log_debug("StartArray");
+    NewLine();
     os_.Put('[');
+    IncLevel();
+    NewLine();
 }
 
 void JsonWriter::ArraySeparator()
 {
     log_debug("ArraySeparator");
     os_.Put(',');
+    NewLine();
 }
 
 void JsonWriter::EndArray(size_t elementCount)
 {
     log_debug("EndArray: count=" << elementCount);
+    DecLevel();
+    NewLine();
     os_.Put(']');
     os_.Flush();
 }
 
+void JsonWriter::NewLine()
+{
+    if (pretty_)
+    {
+        os_.Put('\n');
+        for( int i=0; i<level_; i++)
+            os_.Put("\t");
+    }
+}
+
+void JsonWriter::IncLevel()
+{
+    if (pretty_)
+        level_++;
+}
+
+void JsonWriter::DecLevel()
+{
+    if (pretty_)
+    {
+        level_--;
+        anyrpc_assert(level_ >= 0, AnyRpcErrorPrettyPrintLevel, "Pretty printing level underflow");
+    }
+}
+
+std::string ToJsonString(Value& value, EncodingEnum encoding, unsigned precision, bool pretty)
+{
+    WriteStringStream strStream;
+    JsonWriter jsonStrWriter(strStream, encoding, precision, pretty);
+    jsonStrWriter << value;
+    return strStream.GetString();
+}
 
 }

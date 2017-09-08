@@ -337,4 +337,14 @@ void XmlWriter::DoubleToStream(Stream& os, double value)
     }
 }
 
+std::string ToXmlString(Value& value, int precision, bool pretty)
+{
+    WriteStringStream strStream;
+    XmlWriter xmlStrWriter(strStream, pretty);
+    if (precision > 0)
+        xmlStrWriter.SetScientificPrecision(precision);
+    xmlStrWriter << value;
+    return strStream.GetString();
+}
+
 }

@@ -104,6 +104,9 @@ private:
     log_define("AnyRPC.XmlWriter");
 };
 
+//! Convert value to Xml string
+ANYRPC_API std::string ToXmlString(Value& value, int precision=12, bool pretty=false);
+
 } // namespace anyrpc
 
 #endif // ANYRPC_XMLWRITER_H_

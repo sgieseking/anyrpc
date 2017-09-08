@@ -22,7 +22,7 @@ int main()
     // Create map with various values of different types
     value["integer"] = 32;
     value["string"] = "test string\nsecond line";
-    value["double"] = 5.532e-5;
+    value["double"] = 5.532679123812e-5;
     value["dateTime"].SetDateTime(time(NULL));
 
     Value binary;
@@ -40,8 +40,9 @@ int main()
 
     // Write data to stdout
     cout << "Json data to stdout: " << endl;
-    JsonWriter jsonWriter(stdoutStream);
-    jsonWriter << value;
+    cout << ToJsonString(value,UTF8,8,true);
+    //JsonWriter jsonWriter(stdoutStream,UTF8,true);
+    //jsonWriter << value;
     cout << endl;
 
     // Write data to a string

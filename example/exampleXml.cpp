@@ -45,9 +45,10 @@ int main()
 
     // Write data to stdout
     cout << "Xml data to stdout: " << endl;
-    XmlWriter xmlWriter(stdoutStream);
-    xmlWriter.SetScientificPrecision(6);
-    xmlWriter << value;
+    cout << ToXmlString(value,12,true);
+    //XmlWriter xmlWriter(stdoutStream,true);
+    //xmlWriter.SetScientificPrecision(6);
+    //xmlWriter << value;
     cout << endl;
 
     // Write data to a string

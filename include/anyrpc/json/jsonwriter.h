@@ -43,8 +43,15 @@ namespace anyrpc
 class ANYRPC_API JsonWriter : public Handler
 {
 public:
-    JsonWriter(Stream& os, EncodingEnum encoding=UTF8) : os_(os), encoding_(encoding) {}
+    JsonWriter(Stream& os, EncodingEnum encoding=UTF8, unsigned precision=0, bool pretty=false) :
+        os_(os), encoding_(encoding), pretty_(pretty), level_(0), precision_(precision) {}
     virtual ~JsonWriter() {}
+
+    //! Make the text more readable with indentation and linefeeds
+    void SetPretty(bool pretty=true) { pretty_ = pretty; }
+    //! Set the double format method
+    void SetScientificPrecision(unsigned precision)
+        { precision_ = std::min( 32u, precision); }
 
     //!@name Miscellaneous Member Functions
     //@{
@@ -78,20 +85,33 @@ public:
 
     //!@name Array Processing Member Functions
     //@{
-    virtual void StartArray();
+    virtual void StartArray(size_t elementCount);
     virtual void ArraySeparator();
     virtual void EndArray(std::size_t elementCount = 0);
     //@}
 
 private:
+    //!@name Pretty Output Member Functions
+    //@{
+    inline void NewLine();
+    inline void IncLevel();
+    inline void DecLevel();
+    //@}
+
     //! convert from UTF8 to Unicode character
     void DecodeUtf8(const char* str, std::size_t length, std::size_t &pos, unsigned &codepoint);
 
     Stream& os_;                    //!< Stream to write the json representation to
     EncodingEnum encoding_;         //!< Encoding format for stream
+    bool pretty_;                   //!< Write using tabs and newlines to make it easier for a person to read
+    int level_;                     //!< Current indent level
+    unsigned precision_;            //!< Number of digits of precision when using scientific notation for doubles
 
     log_define("AnyRPC.JsonWriter");
 };
+
+//! Convert value to Json string
+ANYRPC_API std::string ToJsonString(Value& value, EncodingEnum encoding=UTF8, unsigned precision=12, bool pretty=false);
 
 } // namespace anyrpc
 
