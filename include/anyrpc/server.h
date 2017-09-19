@@ -74,6 +74,8 @@ public:
     void SetMaxConnections(unsigned maxConnections) { maxConnections_ = maxConnections; }
     //! Enable or Disable the closing of old connections on connection of new clients
     void SetForcedDisconnectAllowed(bool forcedDisconnectAllowed) { forcedDisconnectAllowed_ = forcedDisconnectAllowed; }
+    //! Check if inactive clients will be disconnected to free slots for new ones
+    bool IsForcedDisconnectAllowed() const { return forcedDisconnectAllowed_; }
     //! Bind the server to a point and start listening for clients
     virtual bool BindAndListen(int port, int backlog = 5);
     //! Operate the server for a specified number of milliseconds
