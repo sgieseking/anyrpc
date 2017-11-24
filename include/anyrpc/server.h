@@ -252,7 +252,7 @@ private:
     std::mutex workQueueMutex_;             //!< Access mutex for the work queue
     std::condition_variable workerBlock_;   //!< Block for the worker threads waiting for work to do
     bool workerExit_;                       //!< Indication that the worker threads should exit
-    UdpSocket serverSignal_;                //!< Signal to the main thread that a worker thread is dont with a connection
+    UdpSocket serverSignal_;                //!< Signal to the main thread that a worker thread is done with a connection
 };
 
 ////////////////////////////////////////////////////////////////////////////////

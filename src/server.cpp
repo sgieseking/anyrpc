@@ -72,8 +72,6 @@ bool Server::BindAndListen(int port, int backlog)
     port_ = port;
 
     // Recreate the sockets in case this is a second call
-    // Note that the TcpSocket constructor automatically calls Create() so Close first.
-    socket_.Close();
     socket_.Create();
 
     // Don't block on reads/writes
@@ -573,8 +571,6 @@ bool ServerTP::BindAndListen(int port, int backlog)
 
     // Setup the signal socket as UDP on the same port as the main socket
     // Recreate the sockets in case this is a second call
-    // Note that the TcpSocket constructor automatically calls Create() so Close first.
-    serverSignal_.Close();
     serverSignal_.Create();
 
     // Don't block on reads/writes

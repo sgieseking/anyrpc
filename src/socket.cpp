@@ -76,12 +76,16 @@ Socket::Socket()
 
 void Socket::Close()
 {
+    if (fd_ != static_cast<SOCKET>(-1))
+    {
+        log_debug( "Close: fd=" << fd_ );
 #ifdef WIN32
-    closesocket(fd_);
+        closesocket(fd_);
 #else
-    close(fd_);
+        close(fd_);
 #endif // WIN32
-    fd_ = static_cast<SOCKET>(-1);
+        fd_ = static_cast<SOCKET>(-1);
+    }
 }
 
 int Socket::SetReuseAddress(int param)
@@ -152,6 +156,12 @@ int Socket::SetNonBlocking()
 #endif // WIN32
     log_debug( "SetNonBlocking: result=" << result);
     return result;
+}
+
+void Socket::SetFileDescriptor(SOCKET fd)
+{
+    Close();
+    fd_ = fd;
 }
 
 int Socket::Bind( int port )
@@ -300,6 +310,7 @@ bool Socket::GetPeerInfo(std::string& ip, unsigned& port) const
 
 SOCKET TcpSocket::Create()
 {
+    Close();
     fd_ = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
     connected_ = false;
     log_debug( "Create: fd=" << fd_);
@@ -487,6 +498,7 @@ int TcpSocket::Connect(const char* ipAddress, int port)
 
 SOCKET UdpSocket::Create()
 {
+    Close();
     fd_ = socket( AF_INET, SOCK_DGRAM, 0 );
     log_debug( "Create: fd=" << fd_);
     return fd_;

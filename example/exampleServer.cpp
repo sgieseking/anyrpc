@@ -171,6 +171,9 @@ int main(int argc, char *argv[])
         port = atoi(argv[2]);
     server->BindAndListen(port);
 
+    // allow a large number of simultaneous connections
+    server->SetMaxConnections(100);
+
     // Determine the time that the server will run
     int timeout = 30;
     if (argc > 3)

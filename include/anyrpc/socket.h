@@ -57,7 +57,7 @@ public:
     int SetNonBlocking();
 
     SOCKET GetFileDescriptor() { return fd_; }
-    void SetFileDescriptor(SOCKET fd) { fd_ = fd; }
+    void SetFileDescriptor(SOCKET fd);
 
     int Bind(int port);
 
@@ -92,13 +92,11 @@ protected:
  *  Many of the socket functions use a timeout.  The timeout can be either specified
  *  to the function or, if the timeout value is -1, default to a previously specified
  *  value from the SetTimeout function.
- *
- *  The file descriptor is automatically created when the TcpSocket is constructed.
  */
 class ANYRPC_API TcpSocket : public Socket
 {
 public:
-    TcpSocket() : connected_(false) { Create(); }
+    TcpSocket() : connected_(false) {}
 
     SOCKET Create();
     int SetTcpNoDelay(int param=1);
@@ -139,7 +137,7 @@ protected:
 class ANYRPC_API UdpSocket : public Socket
 {
 public:
-    UdpSocket() { Create(); }
+    UdpSocket() {}
 
     SOCKET Create();
 

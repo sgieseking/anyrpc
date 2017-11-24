@@ -35,7 +35,7 @@ void TestClient(Client* client, char* ipAddress, int port)
     bool success;
 
     client->SetServer(ipAddress, port);
-    client->SetTimeout(2000);
+    client->SetTimeout(10000);
 
     // Add the parameters
     // Note that the parameters will be invalidated inside the Call
@@ -93,8 +93,8 @@ int main(int argc, char *argv[])
     // Log the time for the system running
     log_time(INFO);
 
-    // Default to one client but allow up to 4;
-    const int maxClients = 6;
+    // Default to one client but allow up to 20;
+    const int maxClients = 20;
     int numClients = 1;
     Client* client[maxClients];
 
