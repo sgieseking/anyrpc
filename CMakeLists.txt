@@ -48,7 +48,7 @@ set_property(CACHE ANYRPC_THROW PROPERTY STRINGS assert throw)
 set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
 set(LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib" CACHE STRING "Directory where lib will install")
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(ANYRPC_INCLUDE_JSON ${BUILD_PROTOCOL_JSON})
 set(ANYRPC_INCLUDE_XML ${BUILD_PROTOCOL_XML})
