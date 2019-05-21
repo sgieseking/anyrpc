@@ -54,6 +54,13 @@ endif ()
 add_library( anyrpc ${ANYRPC_LIB_TYPE} ${ANYRPC_SOURCES} ${ANYRPC_HEADERS} )
 target_link_libraries( anyrpc ${ASAN_LIBRARY} ${LOG4CPLUS_LIBRARIES})
 
+# Fix pthread link on linux
+if(UNIX AND NOT APPLE)
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
+    find_package(Threads REQUIRED)
+    target_link_libraries(anyrpc Threads::Threads)
+endif()
+
 # Need the winsock library for Windows
 if (WIN32)
     target_link_libraries(anyrpc ws2_32)
