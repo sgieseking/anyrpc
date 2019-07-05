@@ -524,9 +524,15 @@ private:
  *  Implement iterator to step through the members of a map similar to std::map.
  *  Access to the members are also provided through access functions.
  */
-class ANYRPC_API MemberIterator : public std::iterator<std::bidirectional_iterator_tag,Member>
+class ANYRPC_API MemberIterator
 {
 public:
+	using iterator_category = std::bidirectional_iterator_tag;
+	using value_type = Member;
+	using difference_type = ptrdiff_t;
+	using pointer = Member*;
+	using reference = Member&;
+
     MemberIterator() : ptr_(0) {}
     MemberIterator(pointer ptr) : ptr_(ptr) {}
     MemberIterator(const MemberIterator& mit) : ptr_(mit.ptr_) {}
