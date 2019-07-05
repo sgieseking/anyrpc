@@ -527,11 +527,11 @@ private:
 class ANYRPC_API MemberIterator
 {
 public:
-	using iterator_category = std::bidirectional_iterator_tag;
-	using value_type = Member;
-	using difference_type = ptrdiff_t;
-	using pointer = Member*;
-	using reference = Member&;
+    using iterator_category = std::bidirectional_iterator_tag;
+    using value_type = Member;
+    using difference_type = ptrdiff_t;
+    using pointer = Member*;
+    using reference = Member&;
 
     MemberIterator() : ptr_(0) {}
     MemberIterator(pointer ptr) : ptr_(ptr) {}
