@@ -47,6 +47,13 @@ endif ()
 # Create the executable with the extra files added
 add_executable( testAnyRPC ${ANYRPC_CPP_TESTS} )
 
+# Add pthreads on Linux
+if (UNIX AND NOT APPLE)
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
+    find_package(Threads REQUIRED)
+    target_link_libraries(testAnyRPC Threads::Threads)
+endif ()
+
 # Add the necessary external library references
 target_link_libraries( testAnyRPC anyrpc ${ASAN_LIBRARY} ${LOG4CPLUS_LIBRARIES} ${GTEST_LIBRARIES} )
 
