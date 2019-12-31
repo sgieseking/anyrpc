@@ -6,6 +6,10 @@
 # include <strings.h>
 #endif
 
+#ifndef WIN32
+# include <arpa/inet.h>
+#endif // WIN32
+
 using namespace std;
 using namespace anyrpc;
 
@@ -14,9 +18,10 @@ using namespace anyrpc;
  *  The parameters to the application are strictly positions so that a
  *  command line parser in not needed.
  *
- *  Param 1 : server type - defaults to jsonhttp
- *  Param 2 : Port for the server - defaults to 9000
- *  Param 3 : Number of seconds to wait until exiting
+ *  Param 1 : server type - defaults to anyhttp
+ *  Param 2 : IpAddress bind for the server - defaults to 0.0.0.0 (all interfaces)
+ *  Param 3 : Port for the server - defaults to 9000
+ *  Param 4 : Number of seconds to wait until exiting
  *
  *  When testing with multiple clients, you should start the server with
  *  a multithreaded version or the client access will be serialized.
@@ -165,10 +170,17 @@ int main(int argc, char *argv[])
     methodManager->AddFunction( &Wait, "wait", "Delay execution for a given number of milliseconds");
     methodManager->AddFunction( &Echo, "echo", "Return the same data that was sent");
 
+    if (argc > 2)
+    {
+        uint32_t address;
+        inet_pton(AF_INET, argv[2], &address);
+        server->SetBindAddress(address);
+    }
+
     // Determine the port for the server
     int port = 9000;
-    if (argc > 2)
-        port = atoi(argv[2]);
+    if (argc > 3)
+        port = atoi(argv[3]);
     server->BindAndListen(port);
 
     // allow a large number of simultaneous connections
@@ -176,8 +188,8 @@ int main(int argc, char *argv[])
 
     // Determine the time that the server will run
     int timeout = 30;
-    if (argc > 3)
-        timeout = atoi(argv[3]);
+    if (argc > 4)
+        timeout = atoi(argv[4]);
 
 #if defined(ANYRPC_THREADING)
     // Run the server as a separate thread

@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 #endif
         else
         {
-            cout << "Undefined protocol0" << endl;
+            cout << "Undefined protocol" << endl;
             return 1;
         }
     }

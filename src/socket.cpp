@@ -164,18 +164,18 @@ void Socket::SetFileDescriptor(SOCKET fd)
     fd_ = fd;
 }
 
-int Socket::Bind( int port )
+int Socket::Bind( int port, uint32_t address )
 {
     struct sockaddr_in sockAddress;
 
     memset( &sockAddress, 0, sizeof(sockAddress) );
     sockAddress.sin_family = AF_INET;
     sockAddress.sin_port = htons( port );
-    sockAddress.sin_addr.s_addr = INADDR_ANY;
+    sockAddress.sin_addr.s_addr = address; // should already be in network order
 
     int result = bind(fd_, (struct sockaddr*)&sockAddress, sizeof(sockAddress));
     SetLastError();  // the logging system may reset errno in Linux
-    log_debug("Bind: port=" << port << ", result=" << result << ", err=" << err_);
+    log_debug("Bind: port=" << port << ", address=0x" << std::hex << address << std::dec << ", result=" << result << ", err=" << err_);
     return result;
 }
 

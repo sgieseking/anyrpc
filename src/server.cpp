@@ -46,6 +46,8 @@
 
 #ifndef WIN32
 # include <unistd.h>   // for close()
+# include <netinet/in.h> // for INADDR_ANY, INDDR_ANY definition
+# include <arpa/inet.h> // for htonl
 #endif // WIN32
 
 namespace anyrpc
@@ -58,6 +60,7 @@ Server::Server()
     working_ = false;
     maxConnections_ = 8;
     port_ = 0;
+    address_ = INADDR_ANY;
     forcedDisconnectAllowed_ = true;
 
 #if defined(ANYRPC_THREADING)
@@ -93,7 +96,7 @@ bool Server::BindAndListen(int port, int backlog)
     }
 
     // Bind to the specified port on the default interface
-    result = socket_.Bind(port);
+    result = socket_.Bind(port, address_);
     if (result != 0)
     {
         socket_.Close();
@@ -592,7 +595,7 @@ bool ServerTP::BindAndListen(int port, int backlog)
     }
 
     // Bind to the specified port on the default interface
-    result = serverSignal_.Bind(port);
+    result = serverSignal_.Bind(port, htonl(INADDR_LOOPBACK));
     if (result != 0)
     {
         serverSignal_.Close();

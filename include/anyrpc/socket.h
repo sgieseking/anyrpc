@@ -59,7 +59,7 @@ public:
     SOCKET GetFileDescriptor() { return fd_; }
     void SetFileDescriptor(SOCKET fd);
 
-    int Bind(int port);
+    int Bind(int port, uint32_t address = 0);
 
     bool FatalError() { return FatalError(err_); }
     bool FatalError(int err);

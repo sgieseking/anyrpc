@@ -76,6 +76,8 @@ public:
     void SetForcedDisconnectAllowed(bool forcedDisconnectAllowed) { forcedDisconnectAllowed_ = forcedDisconnectAllowed; }
     //! Check if inactive clients will be disconnected to free slots for new ones
     bool IsForcedDisconnectAllowed() const { return forcedDisconnectAllowed_; }
+    //! Set the address (network byte order) for the bind operation
+    void SetBindAddress(uint32_t address) { address_ = address; }
     //! Bind the server to a point and start listening for clients
     virtual bool BindAndListen(int port, int backlog = 5);
     //! Operate the server for a specified number of milliseconds
@@ -115,6 +117,7 @@ protected:
 
     TcpSocket socket_;             //!< Socket for communication
     int port_;                     //!< Port used for socket
+    uint32_t address_;             //!< Address used for bind
     bool exit_;                    //!< Indication to exit the Work function or Thread
     bool working_;                 //!< Inside the work loop
     unsigned maxConnections_;      //!< Maximum number of simultaneous active connections
