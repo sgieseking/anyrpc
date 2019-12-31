@@ -45,7 +45,7 @@ class ANYRPC_API Socket
 {
 public:
     Socket();
-    virtual ~Socket() { Close(); }
+    virtual ~Socket();
 
     void Close();
 

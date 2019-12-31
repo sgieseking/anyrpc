@@ -45,33 +45,26 @@ extern "C"
 namespace anyrpc
 {
 
-#if defined(WIN32)
-
-log_define("");
-
-//! Start up winsock with the first socket
-static void InitWinSock()
-{
-    static bool wsInit = false;
-    if (! wsInit)
-    {
-        WORD wVersionRequested = MAKEWORD( 2, 0 );
-        WSADATA wsaData;
-        int err = WSAStartup(wVersionRequested, &wsaData);
-        wsInit = true;
-        log_fatal_if( (err != 0), "WSAStartup = " << err);
-    }
-}
-#endif // WIN32
-
 Socket::Socket()
 {
 #if defined(WIN32)
-    InitWinSock();
+    WORD wVersionRequested = MAKEWORD( 2, 0 );
+    WSADATA wsaData;
+    int err = WSAStartup(wVersionRequested, &wsaData);
+    log_fatal_if( (err != 0), "WSAStartup = " << err);
 #endif
     fd_ = static_cast<SOCKET>(-1);
     timeout_ = 0;
     err_ = 0;
+}
+
+Socket::~Socket()
+{
+    Close();
+#if defined(WIN32)
+    int err = WSACleanup();
+    log_fatal_if( (err != 0), "WSCleanup = " << err);
+#endif
 }
 
 void Socket::Close()
@@ -79,7 +72,7 @@ void Socket::Close()
     if (fd_ != static_cast<SOCKET>(-1))
     {
         log_debug( "Close: fd=" << fd_ );
-#ifdef WIN32
+#if defined(WIN32)
         closesocket(fd_);
 #else
         close(fd_);
