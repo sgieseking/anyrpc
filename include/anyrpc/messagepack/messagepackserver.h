@@ -24,7 +24,7 @@
 namespace anyrpc
 {
 
-bool MessagePackRpcHandler(MethodManager* manager, char* request, std::size_t length, Stream &response);
+ANYRPC_API bool MessagePackRpcHandler(MethodManager* manager, char* request, std::size_t length, Stream &response);
 
 ////////////////////////////////////////////////////////////////////////////////
 
