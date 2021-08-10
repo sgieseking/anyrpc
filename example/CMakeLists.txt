@@ -41,12 +41,16 @@ if (BUILD_WITH_LOG4CPLUS)
     add_definitions( -DBUILD_WITH_LOG4CPLUS )
 endif ()
 
+if (BUILD_WITH_THREADING)
+    find_package(Threads REQUIRED QUIET)
+endif()
+
 # loop through the source files and build each program
 foreach( SOURCEFILE ${EXAMPLE_SOURCES} )
     # Create the executable with the extra files added
     add_executable( ${SOURCEFILE} ${SOURCEFILE}.cpp )
 
     # Add the necessary external library references
-    target_link_libraries( ${SOURCEFILE} anyrpc ${ASAN_LIBRARY} ${LOG4CPLUS_LIBRARIES} ${MSGPACK_LIBRARIES})
+    target_link_libraries( ${SOURCEFILE} anyrpc ${ASAN_LIBRARY} ${LOG4CPLUS_LIBRARIES} ${MSGPACK_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 endforeach ()
 
