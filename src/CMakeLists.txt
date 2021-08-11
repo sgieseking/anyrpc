@@ -47,6 +47,9 @@ if (BUILD_WITH_LOG4CPLUS)
     include_directories(${LOG4CPLUS_INCLUDE_DIRS})
     add_definitions( -DBUILD_WITH_LOG4CPLUS )
 else ()
+    # All code in logger.cpp requires BUILD_WITH_LOG4CPLUS ON.
+    # If it is OFF, don't even build it.
+    list(REMOVE_ITEM ANYRPC_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/logger.cpp")
     set( LOG4CPLUS_LIBRARIES "" )
 endif ()
 
