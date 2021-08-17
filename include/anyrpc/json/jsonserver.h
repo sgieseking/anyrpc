@@ -24,7 +24,7 @@
 namespace anyrpc
 {
 
-bool JsonRpcHandler(MethodManager* manager, char* request, std::size_t length, Stream &response);
+ANYRPC_API bool JsonRpcHandler(MethodManager* manager, char* request, std::size_t length, Stream &response);
 
 ////////////////////////////////////////////////////////////////////////////////
 
