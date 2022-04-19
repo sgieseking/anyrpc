@@ -57,6 +57,12 @@ target_link_libraries( anyrpc ${ASAN_LIBRARY} ${LOG4CPLUS_LIBRARIES})
 # Need the winsock library for Windows
 if (WIN32)
     target_link_libraries(anyrpc ws2_32)
+
+    target_compile_definitions(anyrpc 
+        PRIVATE
+            WINVER=0x0A00
+            _WIN32_WINNT=0x0A00
+    )
 endif ()
 
 set_target_properties( anyrpc PROPERTIES VERSION ${ANYRPC_VERSION} SOVERSION ${ANYRPC_VERSION_MAJOR} )
