@@ -26,11 +26,8 @@
 #include <chrono>
 #endif
 
-#if defined(_MSC_VER)
-#elif defined(__MINGW32__)
-#include <unistd.h>
-#else
-#include <time.h>
+#if !defined(_MSC_VER)
+# include <time.h>
 #endif
 
 namespace anyrpc
@@ -54,16 +51,6 @@ int gettimeofday(struct timeval * tp, struct timezone * tzp)
 	tp->tv_sec = (long)((time - EPOCH) / 10000000L);
 	tp->tv_usec = (long)(system_time.wMilliseconds * 1000);
 	return 0;
-}
-#endif
-
-#if defined(__MINGW32__)
-struct tm* localtime_r(const time_t *timep, struct tm *result)
-{
-	// with Windows localtime is threadsafe since the pointer is to thread local storage
-	struct tm *t=localtime(timep);
-	memcpy(result,t,sizeof(struct tm));
-	return result;
 }
 #endif
 

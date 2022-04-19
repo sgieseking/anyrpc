@@ -98,7 +98,7 @@ int Socket::SetKeepAlive(int param)
 int Socket::SetKeepAliveInterval(int startTime, int interval, int probeCount)
 {
     log_debug( "SetKeepAliveInterval: startTime=" << startTime << ", interval=" << interval << ", probeCount=" << probeCount);
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(__MINGW32__)
     DWORD outBytes;
     tcp_keepalive tcp_ka;
     tcp_ka.onoff = 1;
@@ -109,7 +109,7 @@ int Socket::SetKeepAliveInterval(int startTime, int interval, int probeCount)
     if (result < 0)
         log_debug( "SetKeepAliveInterval: result = " << result );
     return result;
-#elif defined(__MINGW32__) || defined(__CYGWIN__)
+#elif defined(__CYGWIN__)
     // don't see how this can be performed right now
 #elif (__APPLE__)
     int result = setsockopt( fd_, IPPROTO_TCP, TCP_KEEPALIVE, (char*)&startTime, sizeof(startTime) );
@@ -554,15 +554,11 @@ bool UdpSocket::Receive(char* buffer, int maxLength, int &bytesRead, bool &eof, 
 
     port = ntohs(receiveAddr.sin_port);
 
-#if defined(__MINGW32__)
-    // should be thread-safe since it would use the Windows call
-    ipAddress = inet_ntoa(receiveAddr.sin_addr);
-#else
     // Only need this buffer to perform the address conversion in a thread-safe call
     const unsigned bufferLength = 100;
     char addrBuffer[bufferLength];
     ipAddress = inet_ntop(AF_INET,&receiveAddr.sin_addr, addrBuffer, bufferLength);
-#endif
+
     log_debug("Udp Receive: address=" << ipAddress << ", port=" << port);
 
     eof = (numBytes == 0);
