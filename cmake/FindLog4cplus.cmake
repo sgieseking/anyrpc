@@ -61,12 +61,12 @@ else ()
 
 endif ()
 
+# needed to use find_package_handle_standard_args
+include(FindPackageHandleStandardArgs)
+
 if (LOG4CPLUS_INCLUDE_DIR)
 	# set the correct variable name for the header directories         
 	set(LOG4CPLUS_INCLUDE_DIRS ${LOG4CPLUS_INCLUDE_DIR})
-
-	# needed to use find_package_handle_standard_args
-	include(FindPackageHandleStandardArgs)
 	
     if (LOG4CPLUS_LIBRARY_RELEASE AND LOG4CPLUS_LIBRARY_DEBUG)
     	# set the libaries varible to use the release and debug versions
