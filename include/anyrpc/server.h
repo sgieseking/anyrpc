@@ -22,24 +22,9 @@
 #define ANYRPC_SERVER_H_
 
 #if defined(ANYRPC_THREADING)
-# if defined(__MINGW32__)
-// These constants are not defined for mingw but are needed in the following libraries
-#  ifndef EOWNERDEAD
-#   define EOWNERDEAD       133    /* File too big */
-#  endif
-#  ifndef EPROTO
-#   define EPROTO    134    /* Protocol error */
-#  endif
-
-#  include "internal/mingw.thread.h"
-#  include <mutex>
-#  include "internal/mingw.mutex.h"
-#  include "internal/mingw.condition_variable.h"
-# else
-#  include <thread>
-#  include <condition_variable>
-#  include <mutex>
-# endif //defined(__MINGW32__)
+# include <thread>
+# include <condition_variable>
+# include <mutex>
 #endif //defined(ANYRPC_THREADING)
 
 namespace anyrpc

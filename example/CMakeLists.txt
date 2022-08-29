@@ -48,5 +48,13 @@ foreach( SOURCEFILE ${EXAMPLE_SOURCES} )
 
     # Add the necessary external library references
     target_link_libraries( ${SOURCEFILE} anyrpc ${ASAN_LIBRARY} ${LOG4CPLUS_LIBRARIES} ${MSGPACK_LIBRARIES})
+    
+    if (WIN32)
+        target_compile_definitions(${SOURCEFILE}
+            PRIVATE
+                WINVER=0x0A00
+                _WIN32_WINNT=0x0A00
+        )
+    endif ()
 endforeach ()
 

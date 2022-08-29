@@ -61,13 +61,13 @@ else ()
 
 endif ()
 
+# needed to use find_package_handle_standard_args
+include(FindPackageHandleStandardArgs)
+	
 if (MSGPACK_INCLUDE_DIR)
 	# set the correct variable name for the header directories         
 	set(MSGPACK_INCLUDE_DIRS ${MSGPACK_INCLUDE_DIR})
 
-	# needed to use find_package_handle_standard_args
-	include(FindPackageHandleStandardArgs)
-	
     if (MSGPACK_LIBRARY_RELEASE AND MSGPACK_LIBRARY_DEBUG)
     	# set the libaries varible to use the release and debug versions
     	find_package_handle_standard_args(MSGPACK DEFAULT_MSG MSGPACK_INCLUDE_DIR MSGPACK_LIBRARY_RELEASE MSGPACK_LIBRARY_DEBUG)

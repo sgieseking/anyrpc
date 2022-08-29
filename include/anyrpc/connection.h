@@ -22,11 +22,7 @@
 #define ANYRPC_CONNECTION_H_
 
 #if defined(ANYRPC_THREADING)
-# if defined(__MINGW32__)
-#  include "internal/mingw.thread.h"
-# else
-#  include <thread>
-# endif // defined(__MINGW32__)
+# include <thread>
 #endif // defined(ANYRPC_THREADING)
 
 #if defined(ANYRPC_REGEX)

@@ -32,10 +32,6 @@ namespace anyrpc
 int gettimeofday(struct timeval * tp, struct timezone * tzp);
 #endif
 
-#if defined(__MINGW32__)
-struct tm* localtime_r(const time_t *timep, struct tm *result);
-#endif
-
 //! Compute the difference between the two times in milliseconds
 ANYRPC_API int MilliTimeDiff(struct timeval &time1, struct timeval &time2);
 
